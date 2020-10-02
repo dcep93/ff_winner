@@ -6,7 +6,7 @@ function htmlToIds() {
 
 var headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
 function tableToIds(tableElement) {
-  var ids = [];
+  var ids = {};
   for (var i = 0; i < tableElement.children.length; i++) {
     var tr = tableElement.children[i];
     if (tr.children[0].classList.contains("total-col")) {
@@ -14,13 +14,42 @@ function tableToIds(tableElement) {
     }
     var id = trToId(tr);
     if (id !== null) {
-      ids.push(id);
+      var playerName = tr.children[1].children[0].title;
+      ids[id] = playerName;
     }
   }
-  if (ids.length !== 9) {
-    alert(`${ids.length} found`);
+  var length = Object.keys(ids).length;
+  if (length !== 9) {
+    alert(`${length} found`);
   }
   return ids;
+}
+
+function trToId(tr) {
+  var match = tr.innerHTML.match(headshotRegexp);
+  if (match) {
+    var groups = match.groups;
+    if (groups) {
+      return groups.id;
+    }
+  }
+  var dst = tr.getElementsByClassName("truncate")[0];
+  if (dst) {
+    var teamMatch = dst.innerText.match(/(?<team>.*?) D\/ST/);
+    if (teamMatch) {
+      var groups = teamMatch.groups;
+      if (groups) {
+        var team = groups.team;
+        var teamId = teamToId[team];
+        if (teamId) {
+          return teamId;
+        }
+      }
+    }
+    alert(teamMatch);
+  }
+  console.log(tr.innerHTML);
+  return null;
 }
 
 var teamToId = {
@@ -57,30 +86,3 @@ var teamToId = {
   Ravens: "-16033",
   Texans: "-16034",
 };
-
-function trToId(tr) {
-  var match = tr.innerHTML.match(headshotRegexp);
-  if (match) {
-    var groups = match.groups;
-    if (groups) {
-      return groups.id;
-    }
-  }
-  var dst = tr.getElementsByClassName("truncate")[0];
-  if (dst) {
-    var teamMatch = dst.innerText.match(/(?<team>.*?) D\/ST/);
-    if (teamMatch) {
-      var groups = teamMatch.groups;
-      if (groups) {
-        var team = groups.team;
-        var teamId = teamToId[team];
-        if (teamId) {
-          return teamId;
-        }
-      }
-    }
-    alert(teamMatch);
-  }
-  console.log(tr.innerHTML);
-  return null;
-}
