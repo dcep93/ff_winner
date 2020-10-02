@@ -1,24 +1,24 @@
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log("receive", message);
-  switch (message.action) {
-    case "get_data":
-      getData(sendResponse);
-      break;
-    case "return_data":
-      returnData(message.data);
-      break;
-    default:
-      console.log("no action");
-      return false;
-  }
-  return true;
-});
+chrome.runtime.onMessage.addListener(execute);
 
-function getData(sendResponse) {
-  sendResponse({ data: document.body.innerHTML });
+function execute() {
+  Promise.all(
+    [
+      "html_to_ids.js",
+      "id_to_data.js",
+      "data_to_distribution.js",
+      "render_distribution.js",
+    ].map(fileToPromise)
+  )
+    // need to call functions like this so they arent cached or something
+    .then(() => htmlToIds())
+    .then((ids) => idToData(ids))
+    .then((data) => dataToDistribution(data))
+    .then((distribution) => renderDistribution(distribution));
 }
 
-function returnData(data) {
-  alert("data returned");
-  console.log(data);
+function fileToPromise(fileName) {
+  const url = chrome.runtime.getURL(fileName);
+  return fetch(url)
+    .then((response) => response.text())
+    .then(eval);
 }

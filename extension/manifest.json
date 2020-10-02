@@ -18,6 +18,12 @@
       "js": ["content_script.js"]
     }
   ],
+  "web_accessible_resources": [
+    "html_to_ids.js",
+    "id_to_data.js",
+    "data_to_distribution.js",
+    "render_distribution.js"
+  ],
   "browser_action": {
     "default_icon": "favicon.png"
   },
