@@ -1,6 +1,7 @@
 chrome.runtime.onMessage.addListener(execute);
 
 const log = console.log;
+var title = document.title;
 
 function execute() {
   const start = new Date();
@@ -9,7 +10,6 @@ function execute() {
     arr.unshift((new Date() - start) / 1000);
     log.apply(null, arr);
   };
-  window.title = document.title;
   document.title = "Preparing...";
   Promise.all(
     ["html_to_ids.ts", "id_to_data.ts", "data_to_distribution.ts"].map(
@@ -21,7 +21,7 @@ function execute() {
     .then((ids) => idToData(ids))
     .then((data) => dataToDistribution(data))
     .then((distribution) => renderDistribution(distribution))
-    .then(() => (document.title = window.title));
+    .then(() => (document.title = title));
 }
 
 function fileToPromise(fileName) {

@@ -2,6 +2,7 @@ type dType = { v: number; p: number }[];
 type dataToDistributionType = dType[];
 
 const MAX_LENGTH = 150;
+const MAX_PLAYERS = 9;
 
 function dataToDistribution(data: idsToDataType): dataToDistributionType {
   console.log(arguments.callee.name);
@@ -15,8 +16,8 @@ function dataToDistribution(data: idsToDataType): dataToDistributionType {
 
 function joinAllDistributions(teamData: dataType[], i: number): dType {
   var d = [{ v: 0, p: 1 }];
-  teamData.forEach((di, j) => {
-    var progress = (i + j / teamData.length) / 2;
+  teamData.slice(0, MAX_PLAYERS).forEach((di, j) => {
+    var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
     const num = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
     const den = di.d.map((i) => i.p).reduce((a, b) => a + b, 0);

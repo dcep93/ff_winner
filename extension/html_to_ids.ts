@@ -14,9 +14,6 @@ function tableToIds(tableElement): playerType[] {
   const ids = [];
   for (let i = 0; i < tableElement.children.length; i++) {
     let tr = tableElement.children[i];
-    if (tr.children[0].classList.contains("total-col")) {
-      break;
-    }
     let id = trToId(tr);
     if (id !== null) {
       let name = tr.children[1].children[0].title;
@@ -26,11 +23,9 @@ function tableToIds(tableElement): playerType[] {
         player.fpts = parseFloat(fpts);
       }
       ids.push(player);
+    } else {
+      ids.push({ id: 0 });
     }
-  }
-  const length = Object.keys(ids).length;
-  if (length !== 9) {
-    alert(`${length} found`);
   }
   return ids;
 }
@@ -59,7 +54,6 @@ function trToId(tr): string | null {
     }
     alert(teamMatch);
   }
-  console.log(tr.innerHTML);
   return null;
 }
 
