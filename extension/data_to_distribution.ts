@@ -21,7 +21,10 @@ function joinAllDistributions(teamData: dataType[]): dType {
     if (di.fpts !== undefined) {
       d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
     } else {
-      d = joinDistributions(d, di.d);
+      const normalized = di.d.map((i) =>
+        Object.assign({}, i, { p: i.p / den })
+      );
+      d = joinDistributions(d, normalized);
     }
   });
   return d;
@@ -38,10 +41,12 @@ function joinDistributions(
     d2.forEach((p2) => {
       const prob = p1.p * p2.p;
       const score = p1.v + p2.v * operator;
-      if (scoreToP[score]) {
-        scoreToP[score] += prob;
-      } else {
-        scoreToP[score] = prob;
+      if (prob > 0) {
+        if (scoreToP[score]) {
+          scoreToP[score] += prob;
+        } else {
+          scoreToP[score] = prob;
+        }
       }
     })
   );
