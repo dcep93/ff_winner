@@ -92,7 +92,7 @@ function newGraph(tag) {
 
   const domain = (domain) => {
     x.domain(domain);
-    xAxis.call(d3.axisBottom(x));
+    xAxis.call(d3.axisBottom(x).tickFormat((d) => d));
   };
 
   return { plot, domain };
