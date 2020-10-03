@@ -1,7 +1,7 @@
 type dType = { v: number; p: number }[];
 type dataToDistributionType = dType[];
 
-const MAX_LENGTH = 100;
+const MAX_LENGTH = 150;
 
 function dataToDistribution(data: idsToDataType): dataToDistributionType {
   console.log(arguments.callee.name);

@@ -1,6 +1,6 @@
 const key = "distribution_v0.1";
 
-const num_points = 1000;
+const num_points = 10000;
 const num_lines = 3;
 
 const timeout = setTimeout(
