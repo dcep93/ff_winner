@@ -87,6 +87,34 @@ function newGraph(tag) {
     .attr("class", "grid")
     .call(d3.axisLeft(y).ticks(20).tickSize(-width).tickFormat(""));
 
+  var focus = svg.append("g").style("display", "none");
+
+  focus
+    .append("circle")
+    .style("fill", "none")
+    .style("stroke", "blue")
+    .attr("r", 4);
+
+  focus.append("text").attr("dx", "5px").attr("dy", "-5px");
+
+  svg
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .on("mouseover", () => focus.style("display", null))
+    .on("mouseout", () => focus.style("display", "none"))
+    .on("mousemove", mousemove);
+
+  function mousemove() {
+    var horizontal = x.invert(d3.pointer(event, this)[0]);
+    var vertical = 0.5;
+    var translate = `translate(${x(horizontal)},${y(vertical)})`;
+    focus.select("circle").attr("transform", translate);
+    focus.select("text").attr("transform", translate).text(vertical);
+  }
+
   const drawLine = ([x, y], color) =>
     lineSvg
       .append("path")
