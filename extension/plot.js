@@ -1,4 +1,4 @@
-function plot(tag, dataObj, divisions) {
+function plot(tag, dataObj, threshold) {
   // dimensions
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
     width = document.body.offsetWidth - margin.left - margin.right,
@@ -52,6 +52,10 @@ function plot(tag, dataObj, divisions) {
       .attr("style", `stroke: ${color}`)
       .attr("d", valueline);
 
+  if (threshold !== null) {
+    drawLine([threshold, 1], "black");
+  }
+
   // draw data and return actions on mouse move
   const mouseMoves = Object.keys(dataObj).map((color) => {
     // draw data
@@ -62,19 +66,13 @@ function plot(tag, dataObj, divisions) {
       .attr("class", "line")
       .attr("style", `stroke: black; fill: ${color}`)
       .attr("d", valueline);
-    if (divisions) {
+    if (threshold !== null) {
       const step = 1 / (1 + num_lines);
       for (let t = step; t < 1; t += step) {
-        drawLine(
-          data.find((i) => i[1] >= t),
-          color
-        );
+        drawLine([findIntercept(t, 1, data), t], color);
       }
     } else {
-      drawLine(
-        data.find((i) => i[0] > 0),
-        "black"
-      );
+      drawLine([0, findIntercept(0, 0, data)], "black");
     }
 
     // handle mouse move
@@ -91,16 +89,8 @@ function plot(tag, dataObj, divisions) {
 
     // on mousemove, horizontal dimension of mouse position
     return function (horizontal) {
-      var index = data.findIndex((i) => i[0] >= horizontal);
-      var pointA = data[index - 1];
-      var pointB = data[index];
-      if (pointA && pointB) {
-        var distA = horizontal - pointA[0];
-        var distB = pointB[0] - horizontal;
-        var vertical =
-          distA === 0
-            ? pointA[1]
-            : (distA * pointB[1] + distB * pointA[1]) / (distA + distB);
+      var vertical = findIntercept(horizontal, 0, data);
+      if (vertical !== null) {
         var point = [horizontal, vertical];
         focus.style("display", null);
         var translate = `translate(${x(point[0])},${y(point[1])})`;
@@ -127,4 +117,19 @@ function plot(tag, dataObj, divisions) {
     .style("fill", "none")
     .style("pointer-events", "all")
     .on("mousemove", mouseMove);
+}
+
+function findIntercept(value, pos, data) {
+  var index = data.findIndex((i) => i[pos] >= value);
+  var pointA = data[index - 1];
+  var pointB = data[index];
+  if (pointA && pointB) {
+    var distA = value - pointA[pos];
+    var distB = pointB[pos] - value;
+    return distA === 0
+      ? pointA[1]
+      : (distA * pointB[1 - pos] + distB * pointA[1 - pos]) / (distA + distB);
+  } else {
+    return null;
+  }
 }
