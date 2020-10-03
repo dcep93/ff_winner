@@ -15,7 +15,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   sendResponse(true);
 });
 
-function render(distribution) {
+function render(data) {
+  renderDistribution(data.ds);
+}
+
+function renderDistribution(distribution) {
   const p1 = cumProb(distribution[0]);
   const p2 = cumProb(distribution[1]);
 

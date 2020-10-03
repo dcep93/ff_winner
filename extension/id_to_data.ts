@@ -21,10 +21,11 @@ function playerToData(player: playerType): Promise<dataType> {
       d:
         r.SCORE_DISTRIBUTION === "None" ? [] : JSON.parse(r.SCORE_DISTRIBUTION),
     }))
-    .then((r) =>
-      Object.assign({}, r, {
-        d: r.d.map((x: number[]) => ({ v: x[0], p: x[1] })),
-      })
-    )
+    .then((r) => {
+      const sum = r.d.map((i) => i[1]).reduce((a, b) => a + b, 0);
+      return Object.assign({}, r, {
+        d: r.d.map((x: number[]) => ({ v: x[0], p: x[1] / sum })),
+      });
+    })
     .then((r) => Object.assign(r, player));
 }

@@ -1,17 +1,17 @@
 type dType = { v: number; p: number }[];
-type dataToDistributionType = dType[];
+type dataToDistributionType = { ds: dType[]; players: idsToDataType };
 
 const MAX_LENGTH = 150;
 const MAX_PLAYERS = 9;
 
-function dataToDistribution(data: idsToDataType): dataToDistributionType {
+function dataToDistribution(players: idsToDataType): dataToDistributionType {
   console.log(arguments.callee.name);
   document.title = "Computing...";
-  const ds = data.map(joinAllDistributions);
+  const ds = players.map(joinAllDistributions);
   document.title = "Picking a Winner...";
   const advantage = joinDistributions(ds[0], ds[1], true);
   ds.push(advantage);
-  return ds;
+  return { ds, players };
 }
 
 function joinAllDistributions(teamData: dataType[], i: number): dType {
@@ -19,17 +19,12 @@ function joinAllDistributions(teamData: dataType[], i: number): dType {
   teamData.slice(0, MAX_PLAYERS).forEach((di, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-    const num = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
-    const den = di.d.map((i) => i.p).reduce((a, b) => a + b, 0);
-    const mean = num / den;
+    const mean = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
     console.log(di.id, di.name, mean.toFixed(3), di.t, di.fpts);
     if (di.fpts !== undefined) {
       d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
     } else {
-      const normalized = di.d.map((i) =>
-        Object.assign({}, i, { p: i.p / den })
-      );
-      d = joinDistributions(d, normalized);
+      d = joinDistributions(d, di.d);
     }
   });
   return d;
