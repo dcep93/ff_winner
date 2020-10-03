@@ -82,6 +82,11 @@ function newGraph(tag) {
 
   svg.append("g").call(d3.axisLeft(y));
 
+  svg
+    .append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(y).ticks(20).tickSize(-width).tickFormat(""));
+
   const drawLine = ([x, y], color) =>
     lineSvg
       .append("path")
