@@ -1,46 +1,47 @@
-function htmlToIds() {
+function htmlToIds(): { id: string; name: string }[][] {
   return Array.from(document.body.getElementsByClassName("matchupTable"))
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);
 }
 
-var headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
-function tableToIds(tableElement) {
-  var ids = {};
-  for (var i = 0; i < tableElement.children.length; i++) {
-    var tr = tableElement.children[i];
+const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
+function tableToIds(tableElement): { id: string; name: string }[] {
+  const ids = [];
+  for (let i = 0; i < tableElement.children.length; i++) {
+    let tr = tableElement.children[i];
     if (tr.children[0].classList.contains("total-col")) {
       break;
     }
-    var id = trToId(tr);
+    let id = trToId(tr);
     if (id !== null) {
-      var playerName = tr.children[1].children[0].title;
-      ids[id] = playerName;
+      let name = tr.children[1].children[0].title;
+      ids.push({ id, name });
     }
   }
-  var length = Object.keys(ids).length;
+  const length = Object.keys(ids).length;
   if (length !== 9) {
     alert(`${length} found`);
   }
   return ids;
 }
 
-function trToId(tr) {
-  var match = tr.innerHTML.match(headshotRegexp);
+function trToId(tr): string | null {
+  const innerHTML = tr.innerHTML;
+  const match = innerHTML.match(headshotRegexp);
   if (match) {
-    var groups = match.groups;
+    const groups = match.groups;
     if (groups) {
       return groups.id;
     }
   }
-  var dst = tr.getElementsByClassName("truncate")[0];
+  const dst = tr.getElementsByClassName("truncate")[0];
   if (dst) {
-    var teamMatch = dst.innerText.match(/(?<team>.*?) D\/ST/);
+    const teamMatch = dst.innerText.match(/(?<team>.*?) D\/ST/);
     if (teamMatch) {
-      var groups = teamMatch.groups;
+      const groups = teamMatch.groups;
       if (groups) {
-        var team = groups.team;
-        var teamId = teamToId[team];
+        const team = groups.team;
+        const teamId = teamToId[team];
         if (teamId) {
           return teamId;
         }
@@ -52,7 +53,7 @@ function trToId(tr) {
   return null;
 }
 
-var teamToId = {
+const teamToId = {
   Bills: "-16002",
   Bears: "-16003",
   Falcons: "-16001",
