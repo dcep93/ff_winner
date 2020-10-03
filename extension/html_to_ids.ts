@@ -19,9 +19,9 @@ function tableToIds(tableElement): playerType[] {
     if (id !== null) {
       let name = tr.children[1].children[0].title;
       const player: playerType = { id, name };
-      // todo fpts
-      if (false) {
-        player.fpts = 1;
+      const fpts = tr.children[5].children[0].children[0].innerText;
+      if (fpts !== "--") {
+        player.fpts = parseFloat(fpts);
       }
       ids.push(player);
     }
