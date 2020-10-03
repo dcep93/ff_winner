@@ -1,11 +1,14 @@
-function htmlToIds(): { id: string; name: string }[][] {
+type playerType = { id: string; name: string; fpts?: number };
+type htmlToIdsType = playerType[][];
+
+function htmlToIds(): htmlToIdsType {
   return Array.from(document.body.getElementsByClassName("matchupTable"))
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);
 }
 
 const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
-function tableToIds(tableElement): { id: string; name: string }[] {
+function tableToIds(tableElement): playerType[] {
   const ids = [];
   for (let i = 0; i < tableElement.children.length; i++) {
     let tr = tableElement.children[i];
@@ -15,7 +18,12 @@ function tableToIds(tableElement): { id: string; name: string }[] {
     let id = trToId(tr);
     if (id !== null) {
       let name = tr.children[1].children[0].title;
-      ids.push({ id, name });
+      const player: playerType = { id, name };
+      // todo fpts
+      if (false) {
+        player.fpts = 1;
+      }
+      ids.push(player);
     }
   }
   const length = Object.keys(ids).length;
