@@ -1,6 +1,7 @@
 const key = "distribution_v0.1";
 
 const num_points = 1000;
+const num_lines = 3;
 
 const timeout = setTimeout(
   () => render(JSON.parse(localStorage.getItem(key))),
@@ -42,12 +43,12 @@ function render(distribution) {
   const teamsGraph = newGraph("#teams");
   const xs = p1.concat(p2).map((i) => i[0]);
   teamsGraph.domain([Math.min(...xs), Math.max(...xs)]);
-  teamsGraph.plot(p1, "green");
-  teamsGraph.plot(p2, "purple");
+  teamsGraph.plot(p1, "green", true);
+  teamsGraph.plot(p2, "purple", true);
 
   const diffGraph = newGraph("#diff");
   diffGraph.domain([diff[0][0], diff[diff.length - 1][0]]);
-  diffGraph.plot(diff, "green");
+  diffGraph.plot(diff, "green", false);
 }
 
 function newGraph(tag) {
@@ -81,13 +82,40 @@ function newGraph(tag) {
 
   svg.append("g").call(d3.axisLeft(y));
 
-  const plot = (data, color) => {
+  const drawLine = ([x, y], color) =>
+    lineSvg
+      .append("path")
+      .data([
+        [
+          [x, 0],
+          [x, y],
+        ],
+      ])
+      .attr("class", "line")
+      .attr("style", `stroke: ${color}`)
+      .attr("d", valueline);
+
+  const plot = (data, color, divisions) => {
     lineSvg
       .append("path")
       .data([data])
       .attr("class", "line")
-      .attr("style", `fill: ${color}`)
+      .attr("style", `stroke: black; fill: ${color}`)
       .attr("d", valueline);
+    if (divisions) {
+      const step = 1 / (1 + num_lines);
+      for (let t = step; t < 1; t += step) {
+        drawLine(
+          data.find((i) => i[1] >= t),
+          color
+        );
+      }
+    } else {
+      drawLine(
+        data.find((i) => i[0] > 0),
+        "black"
+      );
+    }
   };
 
   const domain = (domain) => {
