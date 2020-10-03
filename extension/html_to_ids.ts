@@ -2,6 +2,7 @@ type playerType = { id: string; name: string; fpts?: number };
 type htmlToIdsType = playerType[][];
 
 function htmlToIds(): htmlToIdsType {
+  console.log(arguments.callee.name);
   return Array.from(document.body.getElementsByClassName("matchupTable"))
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);

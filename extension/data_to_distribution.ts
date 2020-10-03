@@ -1,7 +1,10 @@
 type dType = { v: number; p: number }[];
 type dataToDistributionType = dType[];
 
+const MAX_LENGTH = 100;
+
 function dataToDistribution(data: idsToDataType): dataToDistributionType {
+  console.log(arguments.callee.name);
   const ds = data.map(joinAllDistributions);
   const advantage = joinDistributions(ds[0], ds[1], true);
   ds.push(advantage);
@@ -29,5 +32,42 @@ function joinDistributions(
   d2: dType,
   forAdvantage?: boolean
 ): dType {
-  return [{ v: 1, p: 2 }];
+  const scoreToP = {};
+  const operator = forAdvantage ? -1 : 1;
+  d1.forEach((p1) =>
+    d2.forEach((p2) => {
+      const prob = p1.p * p2.p;
+      const score = p1.v + p2.v * operator;
+      if (scoreToP[score]) {
+        scoreToP[score] += prob;
+      } else {
+        scoreToP[score] = prob;
+      }
+    })
+  );
+  var d = Object.keys(scoreToP)
+    .map((score) => parseFloat(score))
+    .map((score) => ({ v: score, p: scoreToP[score] }))
+    .sort((a, b) => a.v - b.v);
+  if (d.length > MAX_LENGTH) {
+    const size = Math.ceil(d.length / MAX_LENGTH);
+    const newD = [];
+    for (let i = 0; true; i++) {
+      let lower = i * size;
+      let upper = lower + size;
+      let window = d.slice(lower, upper);
+      if (window.length === 0) break;
+      let newPoint = window.reduce(
+        (a, b) => {
+          let p = a.p + b.p;
+          let v = (a.p * a.v + b.p * b.v) / p;
+          return { p, v };
+        },
+        { p: 0, v: 0 }
+      );
+      newD.push(newPoint);
+    }
+    d = newD;
+  }
+  return d;
 }

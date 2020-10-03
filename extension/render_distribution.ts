@@ -1,3 +1,3 @@
 function renderDistribution(distribution: dataToDistributionType) {
-  console.log("renderDistribution");
+  console.log(arguments.callee.name);
 }

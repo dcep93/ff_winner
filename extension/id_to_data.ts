@@ -2,6 +2,7 @@ type dataType = playerType & { d: dType };
 type idsToDataType = dataType[][];
 
 function idToData(ids: htmlToIdsType): Promise<idsToDataType> {
+  console.log(arguments.callee.name);
   const teamPromises = ids.map((teamIds) =>
     Promise.all(teamIds.map(playerToData))
   );

@@ -1,6 +1,14 @@
 chrome.runtime.onMessage.addListener(execute);
 
+const log = console.log;
+
 function execute() {
+  const start = new Date();
+  console.log = function () {
+    var arr = Array.from(arguments);
+    arr.unshift((new Date() - start) / 1000);
+    log.apply(null, arr);
+  };
   Promise.all(
     [
       "html_to_ids.ts",
