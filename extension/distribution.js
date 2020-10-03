@@ -44,18 +44,16 @@ function cumProb(d) {
     .concat([[high, 0]]);
 }
 
+//
+
 function plot(tag, dataObj, divisions) {
+  // dimensions
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
     width = document.body.offsetWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
   var x = d3.scaleLinear().range([0, width]);
   var y = d3.scaleLinear().range([height, 0]);
-
-  var valueline = d3
-    .line()
-    .x((d) => x(d[0]))
-    .y((d) => y(d[1]));
 
   var svg = d3
     .select(tag)
@@ -65,6 +63,7 @@ function plot(tag, dataObj, divisions) {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
+  // domain and range
   y.domain([0, 1]);
   svg.append("g").call(d3.axisLeft(y));
   svg
@@ -82,7 +81,12 @@ function plot(tag, dataObj, divisions) {
     .attr("transform", `translate(${0},${height})`)
     .call(d3.axisBottom(x).tickFormat((d) => d));
 
+  // function to handle input
   var lineSvg = svg.append("g");
+  var valueline = d3
+    .line()
+    .x((d) => x(d[0]))
+    .y((d) => y(d[1]));
   const drawLine = ([x, y], color) =>
     lineSvg
       .append("path")
@@ -96,7 +100,9 @@ function plot(tag, dataObj, divisions) {
       .attr("style", `stroke: ${color}`)
       .attr("d", valueline);
 
+  // draw data and return actions on mouse move
   const mouseMoves = Object.keys(dataObj).map((color) => {
+    // draw data
     let data = dataObj[color];
     lineSvg
       .append("path")
@@ -119,6 +125,8 @@ function plot(tag, dataObj, divisions) {
       );
     }
 
+    // handle mouse move
+    // TODO: mouseout to make label disappear
     var focus = svg.append("g").style("display", "none");
 
     focus
@@ -129,9 +137,19 @@ function plot(tag, dataObj, divisions) {
 
     focus.append("text").attr("dx", "5px").attr("dy", "15px");
 
+    // on mousemove, horizontal dimension of mouse position
     return function (horizontal) {
-      var point = data.find((i) => i[0] >= horizontal);
-      if (point) {
+      var index = data.findIndex((i) => i[0] >= horizontal);
+      var pointA = data[index - 1];
+      var pointB = data[index];
+      if (pointA && pointB) {
+        var distA = horizontal - pointA[0];
+        var distB = pointB[0] - horizontal;
+        var vertical =
+          distA === 0
+            ? pointA[1]
+            : (distA * pointB[1] + distB * pointA[1]) / (distA + distB);
+        var point = [horizontal, vertical];
         focus.style("display", null);
         var translate = `translate(${x(point[0])},${y(point[1])})`;
         focus.select("circle").attr("transform", translate);

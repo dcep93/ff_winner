@@ -10,6 +10,7 @@ function execute() {
     log.apply(null, arr);
   };
   window.title = document.title;
+  document.title = "Preparing...";
   Promise.all(
     ["html_to_ids.ts", "id_to_data.ts", "data_to_distribution.ts"].map(
       fileToPromise
