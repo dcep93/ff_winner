@@ -5,15 +5,19 @@ const MAX_LENGTH = 150;
 
 function dataToDistribution(data: idsToDataType): dataToDistributionType {
   console.log(arguments.callee.name);
+  document.title = "Computing...";
   const ds = data.map(joinAllDistributions);
+  document.title = "Picking a Winner...";
   const advantage = joinDistributions(ds[0], ds[1], true);
   ds.push(advantage);
   return ds;
 }
 
-function joinAllDistributions(teamData: dataType[]): dType {
+function joinAllDistributions(teamData: dataType[], i: number): dType {
   var d = [{ v: 0, p: 1 }];
-  teamData.forEach((di) => {
+  teamData.forEach((di, j) => {
+    var progress = (i + j / teamData.length) / 2;
+    document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
     const num = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
     const den = di.d.map((i) => i.p).reduce((a, b) => a + b, 0);
     const mean = num / den;

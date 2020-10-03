@@ -9,6 +9,7 @@ function execute() {
     arr.unshift((new Date() - start) / 1000);
     log.apply(null, arr);
   };
+  window.title = document.title;
   Promise.all(
     ["html_to_ids.ts", "id_to_data.ts", "data_to_distribution.ts"].map(
       fileToPromise
@@ -18,7 +19,8 @@ function execute() {
     .then(() => htmlToIds())
     .then((ids) => idToData(ids))
     .then((data) => dataToDistribution(data))
-    .then((distribution) => renderDistribution(distribution));
+    .then((distribution) => renderDistribution(distribution))
+    .then(() => (document.title = window.title));
 }
 
 function fileToPromise(fileName) {
@@ -30,5 +32,6 @@ function fileToPromise(fileName) {
 }
 
 function renderDistribution(distribution) {
+  document.title = "Rendering...";
   chrome.runtime.sendMessage({ distribution });
 }

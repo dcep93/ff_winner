@@ -3,6 +3,7 @@ type htmlToIdsType = playerType[][];
 
 function htmlToIds(): htmlToIdsType {
   console.log(arguments.callee.name);
+  document.title = "Parsing...";
   return Array.from(document.body.getElementsByClassName("matchupTable"))
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);
