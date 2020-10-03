@@ -15,7 +15,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   sendResponse(true);
 });
 
-function getPoints(d) {
+function render(distribution) {
+  const p1 = cumProb(distribution[0]);
+  const p2 = cumProb(distribution[1]);
+  const diff = cumProb(distribution[2]);
+
+  plot("#teams", { green: p1, purple: p2 }, true);
+  plot("#diff", { green: diff }, false);
+}
+
+function cumProb(d) {
   const low = d[0].v;
   const high = d[d.length - 1].v;
   const size = (high - low) / (num_points - 1);
@@ -24,29 +33,20 @@ function getPoints(d) {
     var score = Math.floor((i.v - low) / size) * size + low;
     map[score] = i.p + (map[score] || 0);
   });
-  var cumProb = 0;
+  var prob = 0;
   return Object.keys(map)
     .map((i) => [parseFloat(i), map[i]])
     .sort((a, b) => a[0] - b[0])
     .map((i) => {
-      cumProb += i[1];
-      return [i[0], cumProb];
+      prob += i[1];
+      return [i[0], prob];
     })
     .concat([[high, 0]]);
 }
 
-function render(distribution) {
-  const p1 = getPoints(distribution[0]);
-  const p2 = getPoints(distribution[1]);
-  const diff = getPoints(distribution[2]);
-
-  plot("#teams", { green: p1, purple: p2 }, true);
-  plot("#diff", { green: diff }, false);
-}
-
 function plot(tag, dataObj, divisions) {
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
-    width = 960 - margin.left - margin.right,
+    width = document.body.offsetWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
   var x = d3.scaleLinear().range([0, width]);
@@ -119,7 +119,7 @@ function plot(tag, dataObj, divisions) {
       );
     }
 
-    var focus = svg.append("g"); //.style("display", "none");
+    var focus = svg.append("g").style("display", "none");
 
     focus
       .append("circle")
