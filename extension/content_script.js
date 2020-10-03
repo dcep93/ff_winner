@@ -10,12 +10,9 @@ function execute() {
     log.apply(null, arr);
   };
   Promise.all(
-    [
-      "html_to_ids.ts",
-      "id_to_data.ts",
-      "data_to_distribution.ts",
-      "render_distribution.ts",
-    ].map(fileToPromise)
+    ["html_to_ids.ts", "id_to_data.ts", "data_to_distribution.ts"].map(
+      fileToPromise
+    )
   )
     // need to call functions like this so they arent cached or something
     .then(() => htmlToIds())
@@ -30,4 +27,8 @@ function fileToPromise(fileName) {
     .then((response) => response.text())
     .then((code) => window.ts.transpile(code))
     .then(eval);
+}
+
+function renderDistribution(distribution) {
+  chrome.runtime.sendMessage({ distribution });
 }
