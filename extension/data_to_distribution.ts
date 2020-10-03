@@ -17,7 +17,7 @@ function joinAllDistributions(teamData: dataType[]): dType {
     const num = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
     const den = di.d.map((i) => i.p).reduce((a, b) => a + b, 0);
     const mean = num / den;
-    console.log(di.id, di.name, mean.toFixed(3), di.fpts);
+    console.log(di.id, di.name, mean.toFixed(3), di.t, di.fpts);
     if (di.fpts !== undefined) {
       d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
     } else {
