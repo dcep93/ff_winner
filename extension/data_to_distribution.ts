@@ -42,11 +42,7 @@ function joinDistributions(
       const prob = p1.p * p2.p;
       const score = p1.v + p2.v * operator;
       if (prob > 0) {
-        if (scoreToP[score]) {
-          scoreToP[score] += prob;
-        } else {
-          scoreToP[score] = prob;
-        }
+        scoreToP[score] = prob + (scoreToP[score] || 0);
       }
     })
   );
