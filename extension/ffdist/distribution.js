@@ -44,7 +44,7 @@ function renderTeam(team, label) {
     nameSpan.innerText = `${player.name} (${player.position})`;
     playerDiv.appendChild(nameSpan);
     row.insertCell(-1).appendChild(playerDiv);
-    ["proj", "fpts", "mean", "median", "stddev"].forEach(
+    ["fpts", "proj", "mean", "median", "stddev"].forEach(
       (attr) => (row.insertCell(-1).innerText = player[attr]?.toFixed(1) || "-")
     );
     row.insertCell(-1).innerText = player.time;

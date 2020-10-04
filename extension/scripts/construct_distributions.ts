@@ -26,7 +26,7 @@ function joinAllDistributions(
       d = d.map((point) =>
         Object.assign({}, point, { v: point.v + player.fpts })
       );
-    } else {
+    } else if (player.dist.length > 0) {
       d = joinDistributions(d, player.dist);
     }
     delete player.dist;
