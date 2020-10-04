@@ -30,6 +30,25 @@ function renderTeams(teams) {
 
 function renderTeam(team, label) {
   document.getElementById(`summary_${label}`).innerText = team.name;
+  var table = document.getElementById("table");
+  table.insertRow(-1).insertCell(-1).innerText = team.name;
+  team.playerStats.forEach((player) => {
+    var row = table.insertRow(-1);
+    var playerDiv = document.createElement("div");
+    var img = document.createElement("img");
+    img.src = player.imgurl;
+    img.height = "35";
+    playerDiv.appendChild(img);
+    var nameSpan = document.createElement("span");
+    nameSpan.className = "right";
+    nameSpan.innerText = player.name;
+    playerDiv.appendChild(nameSpan);
+    row.insertCell(-1).appendChild(playerDiv);
+    ["proj", "fpts", "mean", "median", "stddev"].forEach(
+      (attr) => (row.insertCell(-1).innerText = player[attr]?.toFixed(1) || "-")
+    );
+    row.insertCell(-1).innerText = player.time;
+  });
 }
 
 function renderDistribution(dists) {
