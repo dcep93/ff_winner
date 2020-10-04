@@ -1,5 +1,5 @@
 type playerType = {
-  id: string;
+  id: number;
   name: string;
   imgurl: string;
   fpts?: number;
@@ -46,13 +46,13 @@ function tableToPlayers(tableElement): playerType[] {
   return ids;
 }
 
-function trToId(tr): string | null {
+function trToId(tr): number | null {
   const innerHTML = tr.innerHTML;
   const match = innerHTML.match(headshotRegexp);
   if (match) {
     const groups = match.groups;
     if (groups) {
-      return groups.id;
+      return parseInt(groups.id);
     }
   }
   const dst = tr.getElementsByClassName("truncate")[0];
@@ -74,36 +74,36 @@ function trToId(tr): string | null {
 }
 
 const dstToId = {
-  Bills: "-16002",
-  Bears: "-16003",
-  Falcons: "-16001",
-  Bengals: "-16004",
-  Browns: "-16005",
-  Cowboys: "-16006",
-  Broncos: "-16007",
-  Lions: "-16008",
-  Packers: "-16009",
-  Titans: "-16010",
-  Colts: "-16011",
-  Chiefs: "-16012",
-  Raiders: "-16013",
-  Rams: "-16014",
-  Dolphins: "-16015",
-  Vikings: "-16016",
-  Saints: "-16018",
-  Patriots: "-16017",
-  Giants: "-16019",
-  Jets: "-16020",
-  Eagles: "-16021",
-  Cardinals: "-16022",
-  Steelers: "-16023",
-  Chargers: "-16024",
-  "49ers": "-16025",
-  Washington: "-16028",
-  Jaguars: "-16030",
-  Seahawks: "-16026",
-  Panthers: "-16029",
-  Buccaneers: "-16027",
-  Ravens: "-16033",
-  Texans: "-16034",
+  Bills: -16002,
+  Bears: -16003,
+  Falcons: -16001,
+  Bengals: -16004,
+  Browns: -16005,
+  Cowboys: -16006,
+  Broncos: -16007,
+  Lions: -16008,
+  Packers: -16009,
+  Titans: -16010,
+  Colts: -16011,
+  Chiefs: -16012,
+  Raiders: -16013,
+  Rams: -16014,
+  Dolphins: -16015,
+  Vikings: -16016,
+  Saints: -16018,
+  Patriots: -16017,
+  Giants: -16019,
+  Jets: -16020,
+  Eagles: -16021,
+  Cardinals: -16022,
+  Steelers: -16023,
+  Chargers: -16024,
+  "49ers": -16025,
+  Washington: -16028,
+  Jaguars: -16030,
+  Seahawks: -16026,
+  Panthers: -16029,
+  Buccaneers: -16027,
+  Ravens: -16033,
+  Texans: -16034,
 };
