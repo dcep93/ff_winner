@@ -2,8 +2,9 @@ type playerType = {
   id: number;
   name: string;
   imgurl: string;
-  fpts?: number;
   position: string;
+  fpts?: number;
+  gameProgress?: number;
 };
 type teamsType = { name: string; players: playerType[] }[];
 
@@ -40,6 +41,10 @@ function tableToPlayers(tableElement): playerType[] {
       if (fpts !== "--") {
         player.fpts = parseFloat(fpts);
       }
+      const status = tr.children[3].getElementsByClassName("gameContent")[0];
+      if (status) {
+        player.gameProgress = getGameProgress(status.innerText);
+      }
       ids.push(player);
     }
   }
@@ -72,6 +77,23 @@ function trToId(tr): number | null {
   }
   return null;
 }
+
+function getGameProgress(timing: string): number {
+  if (timing === "Half") return 0.5;
+  const [clock, quarter] = timing.split(" ");
+  var quarterPortion = quarterToPortion[quarter];
+  if (clock === "End") return quarterPortion + 0.25;
+  const [minutes, seconds] = clock.split(":");
+  var clockPortion = (parseInt(minutes) * 60 + parseInt(seconds)) / 3600;
+  return clockPortion + quarterPortion;
+}
+
+const quarterToPortion = {
+  "1st": 0,
+  "2nd": 0.25,
+  "3rd": 0.5,
+  "4th": 0.75,
+};
 
 const dstToId = {
   Bills: -16002,

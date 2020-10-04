@@ -2,6 +2,8 @@ type teamsAndDistsType = { dists: distType[]; teams: teamsStatsType };
 
 const MAX_DIST_LENGTH = 150;
 const MAX_PLAYERS = 9;
+// draining a full bathtub with the tap on
+const DST_BASE = 10;
 
 function constructDistributions(teams: teamsStatsType): teamsAndDistsType {
   console.log(arguments.callee.name, arguments[0]);
@@ -21,8 +23,22 @@ function joinAllDistributions(
   teamData.slice(0, MAX_PLAYERS).forEach((player, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-    if (player.fpts !== undefined) {
-      // NB: assumes zero additional points during active games
+    if (player.gameProgress) {
+      var base = player.id < 0 ? DST_BASE : 0;
+      var projected = (player.fpts - base) / player.gameProgress + base;
+      if (player.dist.length === 0) {
+        d = d.map((point) =>
+          Object.assign({}, point, { v: point.v + projected })
+        );
+      } else {
+        var dampened = projected * 0.5 * (1 + player.gameProgress);
+        var dist = player.dist.map((point) => ({
+          p: point.p,
+          v: dampened + 0.5 * point.v * (1 - player.gameProgress),
+        }));
+        d = joinDistributions(d, dist);
+      }
+    } else if (player.fpts !== undefined && player.gameProgress === undefined) {
       d = d.map((point) =>
         Object.assign({}, point, { v: point.v + player.fpts })
       );
