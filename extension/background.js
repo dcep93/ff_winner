@@ -7,17 +7,12 @@ function handleClick(tab) {
 chrome.browserAction.onClicked.addListener(handleClick);
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  render(message.data);
+  chrome.tabs.create({ url: chrome.runtime.getURL(message.page) }, function (
+    tab
+  ) {
+    sendMessage(tab.id, message.data, 10);
+  });
 });
-
-function render(data) {
-  chrome.tabs.create(
-    { url: chrome.runtime.getURL("distribution.html") },
-    function (tab) {
-      sendMessage(tab.id, data, 10);
-    }
-  );
-}
 
 function sendMessage(tabId, data, retries) {
   chrome.tabs.sendMessage(tabId, data, (response) => {

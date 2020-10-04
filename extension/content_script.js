@@ -19,7 +19,7 @@ function execute() {
       fileToPromise
     )
   )
-    // need to call functions like this so they arent cached or something
+    // need to call functions like this so they are lazy loaded
     .then(() => htmlToIds())
     .then((ids) => idToData(ids))
     .then((data) => dataToDistribution(data))
@@ -38,5 +38,5 @@ function fileToPromise(fileName) {
 function renderDistribution(data) {
   document.title = "Rendering...";
   console.log(data);
-  chrome.runtime.sendMessage({ data });
+  chrome.runtime.sendMessage({ data, page: "distribution.html" });
 }
