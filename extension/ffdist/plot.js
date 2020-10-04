@@ -25,8 +25,8 @@ function plot(tag, dataObj, threshold) {
     .call(d3.axisLeft(y).ticks(20).tickSize(-width).tickFormat(""));
 
   const nestedEdgeIntercepts = Object.values(dataObj).map((data) => [
-    findIntercept(0.01, 1, data),
-    findIntercept(0.99, 1, data),
+    findIntercept(0.02, 1, data),
+    findIntercept(0.98, 1, data),
   ]);
   const domain = [
     Math.min(...nestedEdgeIntercepts.map((i) => i[0])),
