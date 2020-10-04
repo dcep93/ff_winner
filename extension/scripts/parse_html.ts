@@ -41,9 +41,15 @@ function tableToPlayers(tableElement): playerType[] {
       if (fpts !== "--") {
         player.fpts = parseFloat(fpts);
       }
-      const status = tr.children[3].getElementsByClassName("gameContent")[0];
+      const status = tr.children[3].getElementsByClassName(
+        "game-status-inline"
+      )[0];
       if (status) {
-        player.gameProgress = getGameProgress(status.innerText);
+        const text = getText(status);
+        const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
+        if (match && match.groups) {
+          player.gameProgress = getGameProgress(match.groups.timing);
+        }
       }
       ids.push(player);
     }
@@ -78,21 +84,28 @@ function trToId(tr): number | null {
   return null;
 }
 
+function getText(element) {
+  if (!element.children?.length) return element.innerText;
+  return Array.from(element.children)
+    .map((i) => getText(i))
+    .join(" ");
+}
+
 function getGameProgress(timing: string): number {
   if (timing === "Half") return 0.5;
   const [clock, quarter] = timing.split(" ");
   var quarterPortion = quarterToPortion[quarter];
-  if (clock === "End") return quarterPortion + 0.25;
+  if (clock === "End") return quarterPortion;
   const [minutes, seconds] = clock.split(":");
   var clockPortion = (parseInt(minutes) * 60 + parseInt(seconds)) / 3600;
-  return clockPortion + quarterPortion;
+  return quarterPortion - clockPortion;
 }
 
 const quarterToPortion = {
-  "1st": 0,
-  "2nd": 0.25,
-  "3rd": 0.5,
-  "4th": 0.75,
+  "1st": 0.25,
+  "2nd": 0.5,
+  "3rd": 0.75,
+  "4th": 1,
 };
 
 const dstToId = {
