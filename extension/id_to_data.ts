@@ -6,15 +6,20 @@ type dataType = playerType & {
   median: number;
   stddev: number;
 };
-type idsToDataType = dataType[][];
+type idsToDataType = { name: string; players: dataType[] }[];
 
 function idToData(ids: htmlToIdsType): Promise<idsToDataType> {
   console.log(arguments.callee.name);
   document.title = "Fetching Data...";
-  const teamPromises = ids.map((teamIds) =>
-    Promise.all(teamIds.filter((i) => i.id).map(playerToData))
+  const teamPromises = ids.map(
+    (teamIds) =>
+      new Promise((resolve) =>
+        Promise.all(teamIds.players.filter((i) => i.id).map(playerToData))
+          .then((players) => Object.assign({}, teamIds, { players }))
+          .then(resolve)
+      )
   );
-  return Promise.all(teamPromises);
+  return Promise.all((teamPromises as unknown) as idsToDataType);
 }
 
 function playerToData(player: playerType): Promise<dataType> {

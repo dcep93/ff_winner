@@ -1,12 +1,21 @@
 type playerType = { id: string; name: string; fpts?: number };
-type htmlToIdsType = playerType[][];
+type htmlToIdsType = { name: string; players: playerType[] }[];
 
 function htmlToIds(): htmlToIdsType {
   console.log(arguments.callee.name);
   document.title = "Parsing...";
-  return Array.from(document.body.getElementsByClassName("matchupTable"))
+  const managerNames = Array.from(
+    document.body.getElementsByClassName("teamName")
+  ).map((i) => i.getAttribute("title"));
+  const nestedPlayers = Array.from(
+    document.body.getElementsByClassName("matchupTable")
+  )
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);
+  return [
+    { name: managerNames[0], players: nestedPlayers[0] },
+    { name: managerNames[0], players: nestedPlayers[0] },
+  ];
 }
 
 const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;

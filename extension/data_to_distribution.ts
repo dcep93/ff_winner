@@ -7,7 +7,7 @@ const MAX_PLAYERS = 9;
 function dataToDistribution(players: idsToDataType): dataToDistributionType {
   console.log(arguments.callee.name);
   document.title = "Computing...";
-  const ds = players.map(joinAllDistributions);
+  const ds = players.map((i) => i.players).map(joinAllDistributions);
   document.title = "Picking a Winner...";
   const advantage = joinDistributions(ds[0], ds[1], true);
   ds.push(advantage);

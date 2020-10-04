@@ -4,6 +4,9 @@ const log = console.log;
 var title = document.title;
 
 function execute() {
+  if (location.pathname !== "/football/boxscore")
+    return alert("Can only perform from boxscore view");
+
   const start = new Date();
   console.log = function () {
     var arr = Array.from(arguments);
