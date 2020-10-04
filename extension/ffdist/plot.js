@@ -1,7 +1,8 @@
 function plot(tag, dataObj, threshold) {
   // dimensions
+  var availableWidth = document.body.offsetWidth / 2;
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
-    width = document.body.offsetWidth - margin.left - margin.right,
+    width = availableWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
   var x = d3.scaleLinear().range([0, width]);
@@ -23,10 +24,14 @@ function plot(tag, dataObj, threshold) {
     .attr("class", "grid")
     .call(d3.axisLeft(y).ticks(20).tickSize(-width).tickFormat(""));
 
-  const xs = Object.values(dataObj)
-    .flatMap((i) => i)
-    .map((i) => i[0]);
-  const domain = [Math.min(...xs), Math.max(...xs)];
+  const nestedEdgeIntercepts = Object.values(dataObj).map((data) => [
+    findIntercept(0.01, 1, data),
+    findIntercept(0.99, 1, data),
+  ]);
+  const domain = [
+    Math.min(...nestedEdgeIntercepts.map((i) => i[0])),
+    Math.max(...nestedEdgeIntercepts.map((i) => i[1])),
+  ];
   x.domain(domain);
   svg
     .append("g")
@@ -59,10 +64,12 @@ function plot(tag, dataObj, threshold) {
   // draw data and return actions on mouse move
   const mouseMoves = Object.keys(dataObj).map((color) => {
     // draw data
-    let data = dataObj[color];
+    let data = dataObj[color].filter(
+      (i) => i[0] >= domain[0] && i[1] <= domain[1]
+    );
     lineSvg
       .append("path")
-      .data([data])
+      .data([[[domain[0], 0]].concat(data)])
       .attr("class", "line")
       .attr("style", `stroke: black; fill: ${color}`)
       .attr("d", valueline);

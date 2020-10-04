@@ -10,3 +10,7 @@
 #summary {
   font-size: 20pt;
 }
+
+.column {
+  display: inline-block;
+}
