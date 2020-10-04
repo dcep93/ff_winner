@@ -74,17 +74,13 @@ function cumProb(dist) {
     scoreMap[score] = i.p + (scoreMap[score] || 0);
   });
   var prob = 0;
-  return (
-    Object.keys(scoreMap)
-      .map((i) => [parseFloat(i), scoreMap[i]])
-      .sort((a, b) => a[0] - b[0])
-      .map((i) => {
-        prob += i[1];
-        return [i[0], prob];
-      })
-      // prevents weird shading
-      .concat([[high, 0]])
-  );
+  return Object.keys(scoreMap)
+    .map((i) => [parseFloat(i), scoreMap[i]])
+    .sort((a, b) => a[0] - b[0])
+    .map((i) => {
+      prob += i[1];
+      return [i[0], prob];
+    });
 }
 
 function findUpset(t1, t2) {

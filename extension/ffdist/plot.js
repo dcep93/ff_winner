@@ -67,9 +67,11 @@ function plot(tag, dataObj, upset) {
     let data = dataObj[color].filter(
       (i) => i[0] >= domain[0] && i[0] <= domain[1]
     );
+    let low = data.length ? data[0][0] : domain[0];
+    let high = data.length ? data[data.length - 1][0] : domain[1];
     lineSvg
       .append("path")
-      .data([[[domain[0], 0], ...data, [domain[1], 0]]])
+      .data([[[low, 0], ...data, [high, 0]]])
       .attr("class", "line")
       .attr("style", `stroke: black; fill: ${color}`)
       .attr("d", valueline);
