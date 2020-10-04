@@ -1,22 +1,20 @@
 type dType = { v: number; p: number }[];
-type dataToDistributionType = { ds: dType[]; players: idsToDataType };
+type dataToDistributionType = { ds: dType[]; teams: teamsStatsType };
 
 const MAX_LENGTH = 150;
 const MAX_PLAYERS = 9;
 
-function constructDistributions(
-  players: idsToDataType
-): dataToDistributionType {
+function constructDistributions(data: teamsStatsType): dataToDistributionType {
   console.log(arguments.callee.name, arguments[0]);
   document.title = "Computing...";
-  const ds = players.map((i) => i.players).map(joinAllDistributions);
+  const ds = data.map((i) => i.playerStats).map(joinAllDistributions);
   document.title = "Picking a Winner...";
   const advantage = joinDistributions(ds[0], ds[1], true);
   ds.push(advantage);
-  return { ds, players };
+  return { ds, teams: data };
 }
 
-function joinAllDistributions(teamData: dataType[], i: number): dType {
+function joinAllDistributions(teamData: playerStatsType[], i: number): dType {
   var d = [{ v: 0, p: 1 }];
   teamData.slice(0, MAX_PLAYERS).forEach((di, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
@@ -25,9 +23,9 @@ function joinAllDistributions(teamData: dataType[], i: number): dType {
       // NB: assumes zero additional points during active games
       d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
     } else {
-      d = joinDistributions(d, di.d);
+      d = joinDistributions(d, di.dist);
     }
-    delete di.d;
+    delete di.dist;
   });
   return d;
 }

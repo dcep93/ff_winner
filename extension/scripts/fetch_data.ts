@@ -1,73 +1,79 @@
-type dataType = playerType & {
-  d: dType;
-  t: string;
+type playerStatsType = playerType & {
+  dist: dType;
+  time: string;
   proj: number;
   mean: number;
   median: number;
   stddev: number;
 };
-type idsToDataType = { name: string; players: dataType[] }[];
+type teamStatsType = { name: string; playerStats: playerStatsType[] };
+type teamsStatsType = teamStatsType[];
 
-function fetchData(teams: teamsType): Promise<idsToDataType> {
+function fetchData(teams: teamsType): Promise<teamsStatsType> {
   console.log(arguments.callee.name, arguments[0]);
   document.title = "Fetching Data...";
-  const teamPromises = teams.map(
-    (teamIds) =>
-      new Promise((resolve) =>
-        Promise.all(teamIds.players.filter((i) => i.id).map(playerToData))
-          .then((players) => Object.assign({}, teamIds, { players }))
-          .then(resolve)
-      )
+  const teamPromises = teams.map((team) =>
+    Promise.all(
+      team.players.filter((i) => i.id).map(playerToData)
+    ).then((playerStats) => ({ name: team.name, playerStats }))
   );
-  return Promise.all((teamPromises as unknown) as idsToDataType);
+  return Promise.all(teamPromises);
 }
 
-function playerToData(player: playerType): Promise<dataType> {
+const url_prefix =
+  "https://watsonfantasyfootball.espn.com/espnpartner/dallas/projections/projections";
+const url_suffix = "ESPNFantasyFootball_2020.json";
+function playerToData(player: playerType): Promise<playerStatsType> {
   return (
-    fetch(
-      `https://watsonfantasyfootball.espn.com/espnpartner/dallas/projections/projections_${player.id}_ESPNFantasyFootball_2020.json`
-    )
-      .then((r) => r.json())
-      .then((r) => r[r.length - 1])
-      .then((r) => ({
-        t: r.DATA_TIMESTAMP.split(" ")[0],
-        proj: r.SCORE_PROJECTION,
-        d:
-          r.SCORE_DISTRIBUTION === "None"
+    fetch(`${url_prefix}_${player.id}_${url_suffix}`)
+      .then((req) => req.json())
+      .then((all_data) => all_data[all_data.length - 1])
+      .then((data) => ({
+        time: data.DATA_TIMESTAMP.split(" ")[0],
+        proj: data.SCORE_PROJECTION,
+        dist:
+          data.SCORE_DISTRIBUTION === "None"
             ? []
-            : JSON.parse(r.SCORE_DISTRIBUTION),
+            : JSON.parse(data.SCORE_DISTRIBUTION),
       }))
-      .then((r) => {
-        const sum = r.d.map((i) => i[1]).reduce((a, b) => a + b, 0);
-        return Object.assign({}, r, {
-          d: r.d.map((x: number[]) => ({ v: x[0], p: x[1] / sum })),
+      .then((playerStats) => {
+        const sum = playerStats.dist
+          .map((i) => i[1])
+          .reduce((a, b) => a + b, 0);
+        return Object.assign({}, playerStats, {
+          dist: playerStats.dist.map((x: number[]) => ({
+            v: x[0],
+            p: x[1] / sum,
+          })),
         });
       })
-      .then((r) =>
+      .then((playerStats) =>
         Object.assign(
           {
-            mean: r.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0),
-            median: r.d.reduce(
+            mean: playerStats.dist
+              .map((i) => i.p * i.v)
+              .reduce((a, b) => a + b, 0),
+            median: playerStats.dist.reduce(
               (a, b) => (a.p >= 0.5 ? a : { p: a.p + b.p, v: b.v }),
               { p: 0, v: 0 }
             ).v,
           },
-          r,
+          playerStats,
           player
         )
       )
-      // not 100% sure this is correct
-      .then((r) =>
+      // not 100% sure this calculation of stddev is correct
+      .then((playerStats) =>
         Object.assign(
           {
             stddev: Math.pow(
-              r.d
-                .map((i) => Math.pow(i.v - r.mean, 2) * i.p)
+              playerStats.dist
+                .map((i) => Math.pow(i.v - playerStats.mean, 2) * i.p)
                 .reduce((a, b) => a + b, 0),
               0.5
             ),
           },
-          r
+          playerStats
         )
       )
   );
