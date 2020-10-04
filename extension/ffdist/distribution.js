@@ -86,12 +86,12 @@ function findUpset(t1, t2) {
   }
   var i1 = teamIdeal(probs, 1);
   var i2 = teamIdeal(probs, 2);
-  return (i1[0] + i2[0]) / 2;
+  return Math.min(i1, i2);
 }
 
 function teamIdeal(probs, index) {
   return probs
     .map((i) => [i[0], i[3 - index] * (1 - i[index])])
     .filter((i) => i[1])
-    .reduce((a, b) => (a[1] > b[1] ? a : b), [0, 0]);
+    .reduce((a, b) => (a[1] > b[1] ? a : b), [0, 0])[0];
 }
