@@ -87,30 +87,29 @@ function cumProb(dist) {
   );
 }
 
-// this method is sus
 function findUpset(t1, t2) {
-  t1 = t1.slice();
-  t2 = t2.slice();
-  var probs = [];
-  var p1 = t1.shift();
-  var p2 = t2.shift();
-  while (p1[1] && p2[1]) {
-    if (p1[0] < p2[0]) {
-      probs.push([p1[0], p1[1], p2[1]]);
-      p1 = t1.shift();
+  var t1IsWinning = findIntercept(0.5, 1, t1) > findIntercept(0.5, 1, t2);
+  var favorite = t1IsWinning ? t1.slice() : t2.slice();
+  var underdog = t1IsWinning ? t2.slice() : t1.slice();
+  var upset = NaN;
+  var prob = 0;
+  var upsetQ;
+  var probQ;
+  var f = favorite.shift();
+  var u = underdog.shift();
+  while (f[1] && u[1]) {
+    probQ = (1 - u[1]) * f[1];
+    if (f[0] < u[0]) {
+      upsetQ = f[0];
+      f = favorite.shift();
     } else {
-      probs.push([p2[0], p1[1], p2[1]]);
-      p2 = t2.shift();
+      upsetQ = u[0];
+      u = underdog.shift();
+    }
+    if (probQ > prob) {
+      prob = probQ;
+      upset = upsetQ;
     }
   }
-  var i1 = teamIdeal(probs, 1);
-  var i2 = teamIdeal(probs, 2);
-  return Math.min(i1, i2);
-}
-
-function teamIdeal(probs, index) {
-  return probs
-    .map((i) => [i[0], i[3 - index] * (1 - i[index])])
-    .filter((i) => i[1])
-    .reduce((a, b) => (a[1] > b[1] ? a : b), [0, 0])[0];
+  return upset;
 }
