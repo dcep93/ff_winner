@@ -12,10 +12,10 @@ function htmlToIds(): htmlToIdsType {
   )
     .map((element) => element.getElementsByTagName("tbody")[0])
     .map(tableToIds);
-  return [
-    { name: managerNames[0], players: nestedPlayers[0] },
-    { name: managerNames[0], players: nestedPlayers[0] },
-  ];
+  return Array.from(new Array(2)).map((_, i) => ({
+    name: managerNames[i],
+    players: nestedPlayers[i],
+  }));
 }
 
 const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;

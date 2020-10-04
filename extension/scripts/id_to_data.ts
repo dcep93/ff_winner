@@ -9,7 +9,7 @@ type dataType = playerType & {
 type idsToDataType = { name: string; players: dataType[] }[];
 
 function idToData(ids: htmlToIdsType): Promise<idsToDataType> {
-  console.log(arguments.callee.name);
+  console.log(arguments.callee.name, ids);
   document.title = "Fetching Data...";
   const teamPromises = ids.map(
     (teamIds) =>

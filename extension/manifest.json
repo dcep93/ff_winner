@@ -14,15 +14,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://fantasy.espn.com/*"],
+      "matches": ["https://fantasy.espn.com/football/boxscore*"],
       "js": ["content_script.js", "typescriptServices.js"]
     }
   ],
   "web_accessible_resources": [
-    "html_to_ids.ts",
-    "id_to_data.ts",
-    "data_to_distribution.ts",
-    "render_distribution.ts"
+    "scripts/html_to_ids.ts",
+    "scripts/id_to_data.ts",
+    "scripts/data_to_distribution.ts"
   ],
   "browser_action": {
     "default_icon": "favicon.png"

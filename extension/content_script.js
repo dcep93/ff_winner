@@ -28,7 +28,7 @@ function execute() {
 }
 
 function fileToPromise(fileName) {
-  const url = chrome.runtime.getURL(fileName);
+  const url = chrome.runtime.getURL(`scripts/${fileName}`);
   return fetch(url)
     .then((response) => response.text())
     .then((code) => window.ts.transpile(code))
@@ -38,5 +38,5 @@ function fileToPromise(fileName) {
 function renderDistribution(data) {
   document.title = "Rendering...";
   console.log(data);
-  chrome.runtime.sendMessage({ data, page: "distribution.html" });
+  chrome.runtime.sendMessage({ data, page: "ffdist/distribution.html" });
 }
