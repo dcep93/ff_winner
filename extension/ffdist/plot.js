@@ -72,7 +72,20 @@ function plot(tag, dataObj, threshold) {
         drawLine([findIntercept(t, 1, data), t], color);
       }
     } else {
-      drawLine([0, findIntercept(0, 0, data)], "black");
+      var intercept = findIntercept(0, 0, data);
+      drawLine([0, intercept], "black");
+      var action, prob;
+      if (intercept > 0.5) {
+        action = "LOSES TO";
+        prob = intercept;
+      } else {
+        action = "BEATS";
+        prob = 1 - intercept;
+      }
+      document.getElementById("summary_action").innerText = action;
+      document.getElementById("summary_prob").innerText = (prob * 100).toFixed(
+        2
+      );
     }
 
     // handle mouse move

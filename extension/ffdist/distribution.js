@@ -18,18 +18,30 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 //
 
 function render(data) {
+  console.log(data);
+  renderTeams(data.teams);
   renderDistribution(data.dists);
+}
+
+function renderTeams(teams) {
+  renderTeam(teams[0], "t1");
+  renderTeam(teams[1], "t2");
+}
+
+function renderTeam(team, label) {
+  document.getElementById(`summary_${label}`).innerText = team.name;
 }
 
 function renderDistribution(dists) {
   const t1 = cumProb(dists[0]);
   const t2 = cumProb(dists[1]);
 
-  const threshold = chooseInflectionPoint(t1, t2);
+  const upset = findUpset(t1, t2);
+  document.getElementById("summary_upset").innerText = upset.toFixed(2);
 
   const diff = cumProb(dists[2]);
 
-  plot("#teams", { green: t1, purple: t2 }, threshold);
+  plot("#teams", { green: t1, purple: t2 }, upset);
   plot("#diff", { green: diff }, null);
 }
 
@@ -57,7 +69,7 @@ function cumProb(dist) {
 }
 
 // this method is sus
-function chooseInflectionPoint(t1, t2) {
+function findUpset(t1, t2) {
   t1 = t1.slice();
   t2 = t2.slice();
   var probs = [];

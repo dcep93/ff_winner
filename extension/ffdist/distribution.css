@@ -6,3 +6,7 @@
 .grid {
   opacity: 20%;
 }
+
+#summary {
+  font-size: 20pt;
+}

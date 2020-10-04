@@ -7,8 +7,24 @@
     <link rel="stylesheet" href="distribution.css" />
   </head>
   <body>
-    <div>FF Dist</div>
-    <div id="teams"></div>
-    <div id="diff"></div>
+    <div>
+      <div
+        id="summary"
+        title="The underdog is most likely to win when both scores are near the upset score. (WIP)"
+      >
+        <div>
+          <span id="summary_t1"></span>
+          <span id="summary_action"></span>
+          <span id="summary_t2"></span>
+        </div>
+        <div>
+          with probability: <span id="summary_prob"></span>%
+          <br />
+          upset score: <span id="summary_upset"></span>
+        </div>
+      </div>
+      <div id="teams"></div>
+      <div id="diff"></div>
+    </div>
   </body>
 </html>
