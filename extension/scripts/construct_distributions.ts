@@ -57,7 +57,7 @@ function joinDistributions(
   if (d.length > MAX_DIST_LENGTH) {
     const size = Math.ceil(d.length / MAX_DIST_LENGTH);
     const newD = [];
-    for (let lower = 0; lower <= d.length; lower += size) {
+    for (let lower = 0; lower < d.length; lower += size) {
       let upper = lower + size;
       let window = d.slice(lower, upper);
       let newPoint = window.reduce(
