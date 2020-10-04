@@ -41,7 +41,7 @@ function renderTeam(team, label) {
     playerDiv.appendChild(img);
     var nameSpan = document.createElement("span");
     nameSpan.className = "right";
-    nameSpan.innerText = player.name;
+    nameSpan.innerText = `${player.name} (${player.position})`;
     playerDiv.appendChild(nameSpan);
     row.insertCell(-1).appendChild(playerDiv);
     ["proj", "fpts", "mean", "median", "stddev"].forEach(
