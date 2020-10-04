@@ -7,23 +7,23 @@ function handleClick(tab) {
 chrome.browserAction.onClicked.addListener(handleClick);
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  render(message.distribution);
+  render(message.data);
 });
 
-function render(distribution) {
+function render(data) {
   chrome.tabs.create(
     { url: chrome.runtime.getURL("distribution.html") },
     function (tab) {
-      sendMessage(tab.id, distribution, 10);
+      sendMessage(tab.id, data, 10);
     }
   );
 }
 
-function sendMessage(tabId, distribution, retries) {
-  chrome.tabs.sendMessage(tabId, distribution, (response) => {
+function sendMessage(tabId, data, retries) {
+  chrome.tabs.sendMessage(tabId, data, (response) => {
     if (response) return;
     chrome.runtime.lastError;
     if (!retries) return;
-    setTimeout(() => sendMessage(tabId, distribution, retries - 1), 25);
+    setTimeout(() => sendMessage(tabId, data, retries - 1), 25);
   });
 }

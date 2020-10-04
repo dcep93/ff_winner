@@ -19,9 +19,8 @@ function joinAllDistributions(teamData: dataType[], i: number): dType {
   teamData.slice(0, MAX_PLAYERS).forEach((di, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-    const mean = di.d.map((i) => i.p * i.v).reduce((a, b) => a + b, 0);
-    console.log(di.id, di.name, mean.toFixed(3), di.t, di.fpts);
     if (di.fpts !== undefined) {
+      // NB: assumes zero additional points during active games
       d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
     } else {
       d = joinDistributions(d, di.d);

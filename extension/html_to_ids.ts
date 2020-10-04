@@ -23,8 +23,6 @@ function tableToIds(tableElement): playerType[] {
         player.fpts = parseFloat(fpts);
       }
       ids.push(player);
-    } else {
-      ids.push({ id: 0 });
     }
   }
   return ids;

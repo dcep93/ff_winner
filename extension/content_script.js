@@ -20,7 +20,7 @@ function execute() {
     .then(() => htmlToIds())
     .then((ids) => idToData(ids))
     .then((data) => dataToDistribution(data))
-    .then((distribution) => renderDistribution(distribution))
+    .then((data) => renderDistribution(data))
     .then(() => (document.title = title));
 }
 
@@ -32,7 +32,8 @@ function fileToPromise(fileName) {
     .then(eval);
 }
 
-function renderDistribution(distribution) {
+function renderDistribution(data) {
   document.title = "Rendering...";
-  chrome.runtime.sendMessage({ distribution });
+  console.log(data);
+  chrome.runtime.sendMessage({ data });
 }
