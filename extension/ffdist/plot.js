@@ -1,4 +1,4 @@
-function plot(tag, dataObj, threshold) {
+function plot(tag, dataObj, upset) {
   // dimensions
   var availableWidth = document.body.offsetWidth / 2;
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
@@ -57,23 +57,23 @@ function plot(tag, dataObj, threshold) {
       .attr("style", `stroke: ${color}`)
       .attr("d", valueline);
 
-  if (threshold !== null) {
-    drawLine([threshold, 1], "black");
+  if (upset !== null && !isNaN(upset)) {
+    drawLine([upset, 1], "black");
   }
 
   // draw data and return actions on mouse move
   const mouseMoves = Object.keys(dataObj).map((color) => {
     // draw data
     let data = dataObj[color].filter(
-      (i) => i[0] >= domain[0] && i[1] <= domain[1]
+      (i) => i[0] >= domain[0] && i[0] <= domain[1]
     );
     lineSvg
       .append("path")
-      .data([[[domain[0], 0]].concat(data)])
+      .data([[[domain[0], 0], ...data, [domain[1], 0]]])
       .attr("class", "line")
       .attr("style", `stroke: black; fill: ${color}`)
       .attr("d", valueline);
-    if (threshold !== null) {
+    if (upset !== null) {
       const step = 1 / (1 + num_lines);
       for (let t = step; t < 1; t += step) {
         drawLine([findIntercept(t, 1, data), t], color);

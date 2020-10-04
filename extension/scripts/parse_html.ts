@@ -27,7 +27,7 @@ function parseHTML(): teamsType {
 
 const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
 function tableToPlayers(tableElement): playerType[] {
-  const ids = [];
+  const players = [];
   for (let i = 0; i < tableElement.children.length; i++) {
     let tr = tableElement.children[i];
     let id = trToId(tr);
@@ -51,10 +51,10 @@ function tableToPlayers(tableElement): playerType[] {
           player.gameProgress = getGameProgress(match.groups.timing);
         }
       }
-      ids.push(player);
+      players.push(player);
     }
   }
-  return ids;
+  return players;
 }
 
 function trToId(tr): number | null {
