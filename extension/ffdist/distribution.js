@@ -89,26 +89,20 @@ function cumProb(dist) {
 
 function findUpset(t1, t2) {
   var t1IsWinning = findIntercept(0.5, 1, t1) > findIntercept(0.5, 1, t2);
-  var favorite = t1IsWinning ? t1.slice() : t2.slice();
-  var underdog = t1IsWinning ? t2.slice() : t1.slice();
+  var favorite = t1IsWinning ? t1 : t2;
+  var underdog = t1IsWinning ? t2 : t1;
   var upset = NaN;
   var prob = 0;
-  var upsetQ;
   var probQ;
-  var f = favorite.shift();
-  var u = underdog.shift();
-  while (f[1] && u[1]) {
-    probQ = (1 - u[1]) * f[1];
-    if (f[0] < u[0]) {
-      upsetQ = f[0];
-      f = favorite.shift();
-    } else {
-      upsetQ = u[0];
-      u = underdog.shift();
-    }
-    if (probQ > prob) {
-      prob = probQ;
-      upset = upsetQ;
+  for (var i = 0; i < favorite.length; i++) {
+    var f = favorite[i];
+    var uProb = findIntercept(f[0], 0, underdog);
+    if (uProb) {
+      probQ = (1 - uProb) * f[1];
+      if (probQ > prob) {
+        prob = probQ;
+        upset = f[0];
+      }
     }
   }
   return upset;
