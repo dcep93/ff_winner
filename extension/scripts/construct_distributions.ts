@@ -7,7 +7,7 @@ const MAX_PLAYERS = 9;
 function constructDistributions(
   players: idsToDataType
 ): dataToDistributionType {
-  console.log(arguments.callee.name, players);
+  console.log(arguments.callee.name, arguments[0]);
   document.title = "Computing...";
   const ds = players.map((i) => i.players).map(joinAllDistributions);
   document.title = "Picking a Winner...";
@@ -27,6 +27,7 @@ function joinAllDistributions(teamData: dataType[], i: number): dType {
     } else {
       d = joinDistributions(d, di.d);
     }
+    delete di.d;
   });
   return d;
 }

@@ -1,25 +1,25 @@
 type playerType = { id: string; name: string; imgurl: string; fpts?: number };
-type htmlToIdsType = { name: string; players: playerType[] }[];
+type teamsType = { name: string; players: playerType[] }[];
 
-function parseHTML(): htmlToIdsType {
-  console.log(arguments.callee.name);
+function parseHTML(): teamsType {
+  console.log(arguments.callee.name, arguments[0]);
   document.title = "Parsing...";
   const managerNames = Array.from(
     document.body.getElementsByClassName("teamName")
   ).map((i) => i.getAttribute("title"));
-  const nestedPlayers = Array.from(
+  const teamPlayers = Array.from(
     document.body.getElementsByClassName("matchupTable")
   )
     .map((element) => element.getElementsByTagName("tbody")[0])
-    .map(tableToIds);
+    .map(tableToPlayers);
   return Array.from(new Array(2)).map((_, i) => ({
     name: managerNames[i],
-    players: nestedPlayers[i],
+    players: teamPlayers[i],
   }));
 }
 
 const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
-function tableToIds(tableElement): playerType[] {
+function tableToPlayers(tableElement): playerType[] {
   const ids = [];
   for (let i = 0; i < tableElement.children.length; i++) {
     let tr = tableElement.children[i];
@@ -55,7 +55,7 @@ function trToId(tr): string | null {
       const groups = teamMatch.groups;
       if (groups) {
         const team = groups.team;
-        const teamId = teamToId[team];
+        const teamId = dstToId[team];
         if (teamId) {
           return teamId;
         }
@@ -66,7 +66,7 @@ function trToId(tr): string | null {
   return null;
 }
 
-const teamToId = {
+const dstToId = {
   Bills: "-16002",
   Bears: "-16003",
   Falcons: "-16001",

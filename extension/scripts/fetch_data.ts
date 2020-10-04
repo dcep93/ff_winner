@@ -8,10 +8,10 @@ type dataType = playerType & {
 };
 type idsToDataType = { name: string; players: dataType[] }[];
 
-function fetchData(ids: htmlToIdsType): Promise<idsToDataType> {
-  console.log(arguments.callee.name, ids);
+function fetchData(teams: teamsType): Promise<idsToDataType> {
+  console.log(arguments.callee.name, arguments[0]);
   document.title = "Fetching Data...";
-  const teamPromises = ids.map(
+  const teamPromises = teams.map(
     (teamIds) =>
       new Promise((resolve) =>
         Promise.all(teamIds.players.filter((i) => i.id).map(playerToData))
