@@ -1,4 +1,4 @@
-type playerType = { id: string; name: string; fpts?: number };
+type playerType = { id: string; name: string; imgurl: string; fpts?: number };
 type htmlToIdsType = { name: string; players: playerType[] }[];
 
 function htmlToIds(): htmlToIdsType {
@@ -25,8 +25,10 @@ function tableToIds(tableElement): playerType[] {
     let tr = tableElement.children[i];
     let id = trToId(tr);
     if (id !== null) {
-      let name = tr.children[1].children[0].title;
-      const player: playerType = { id, name };
+      let div = tr.children[1].children[0];
+      let name = div.title;
+      let imgurl = div.getElementsByTagName("img")[0].src;
+      const player: playerType = { id, name, imgurl };
       const fpts = tr.children[5].children[0].children[0].innerText;
       if (fpts !== "--") {
         player.fpts = parseFloat(fpts);
