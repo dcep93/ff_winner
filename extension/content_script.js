@@ -15,15 +15,15 @@ function execute() {
   };
   document.title = "Preparing...";
   Promise.all(
-    ["html_to_ids.ts", "id_to_data.ts", "data_to_distribution.ts"].map(
+    ["parse_html.ts", "fetch_data.ts", "construct_distributions.ts"].map(
       fileToPromise
     )
   )
     // need to call functions like this so they are lazy loaded
-    .then(() => htmlToIds())
-    .then((ids) => idToData(ids))
-    .then((data) => dataToDistribution(data))
-    .then((data) => renderDistribution(data))
+    .then(() => parseHTML())
+    .then((data) => fetchData(data))
+    .then((data) => constructDistributions(data))
+    .then((data) => render(data))
     .then(() => (document.title = title));
 }
 
@@ -35,7 +35,7 @@ function fileToPromise(fileName) {
     .then(eval);
 }
 
-function renderDistribution(data) {
+function render(data) {
   document.title = "Rendering...";
   console.log(data);
   chrome.runtime.sendMessage({ data, page: "ffdist/distribution.html" });

@@ -1,7 +1,7 @@
 type playerType = { id: string; name: string; imgurl: string; fpts?: number };
 type htmlToIdsType = { name: string; players: playerType[] }[];
 
-function htmlToIds(): htmlToIdsType {
+function parseHTML(): htmlToIdsType {
   console.log(arguments.callee.name);
   document.title = "Parsing...";
   const managerNames = Array.from(

@@ -4,7 +4,9 @@ type dataToDistributionType = { ds: dType[]; players: idsToDataType };
 const MAX_LENGTH = 150;
 const MAX_PLAYERS = 9;
 
-function dataToDistribution(players: idsToDataType): dataToDistributionType {
+function constructDistributions(
+  players: idsToDataType
+): dataToDistributionType {
   console.log(arguments.callee.name, players);
   document.title = "Computing...";
   const ds = players.map((i) => i.players).map(joinAllDistributions);
