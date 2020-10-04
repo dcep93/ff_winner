@@ -1,40 +1,44 @@
-type dType = { v: number; p: number }[];
-type dataToDistributionType = { ds: dType[]; teams: teamsStatsType };
+type teamsAndDistsType = { dists: distType[]; teams: teamsStatsType };
 
-const MAX_LENGTH = 150;
+const MAX_DIST_LENGTH = 150;
 const MAX_PLAYERS = 9;
 
-function constructDistributions(data: teamsStatsType): dataToDistributionType {
+function constructDistributions(teams: teamsStatsType): teamsAndDistsType {
   console.log(arguments.callee.name, arguments[0]);
   document.title = "Computing...";
-  const ds = data.map((i) => i.playerStats).map(joinAllDistributions);
+  const dists = teams.map((i) => i.playerStats).map(joinAllDistributions);
   document.title = "Picking a Winner...";
-  const advantage = joinDistributions(ds[0], ds[1], true);
-  ds.push(advantage);
-  return { ds, teams: data };
+  const advantageDist = joinDistributions(dists[0], dists[1], true);
+  dists.push(advantageDist);
+  return { dists, teams };
 }
 
-function joinAllDistributions(teamData: playerStatsType[], i: number): dType {
+function joinAllDistributions(
+  teamData: playerStatsType[],
+  i: number
+): distType {
   var d = [{ v: 0, p: 1 }];
-  teamData.slice(0, MAX_PLAYERS).forEach((di, j) => {
+  teamData.slice(0, MAX_PLAYERS).forEach((player, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-    if (di.fpts !== undefined) {
+    if (player.fpts !== undefined) {
       // NB: assumes zero additional points during active games
-      d = d.map((point) => Object.assign({}, point, { v: point.v + di.fpts }));
+      d = d.map((point) =>
+        Object.assign({}, point, { v: point.v + player.fpts })
+      );
     } else {
-      d = joinDistributions(d, di.dist);
+      d = joinDistributions(d, player.dist);
     }
-    delete di.dist;
+    delete player.dist;
   });
   return d;
 }
 
 function joinDistributions(
-  d1: dType,
-  d2: dType,
+  d1: distType,
+  d2: distType,
   forAdvantage?: boolean
-): dType {
+): distType {
   const scoreToP = {};
   const operator = forAdvantage ? -1 : 1;
   d1.forEach((p1) =>
@@ -50,14 +54,12 @@ function joinDistributions(
     .map((score) => parseFloat(score))
     .map((score) => ({ v: score, p: scoreToP[score] }))
     .sort((a, b) => a.v - b.v);
-  if (d.length > MAX_LENGTH) {
-    const size = Math.ceil(d.length / MAX_LENGTH);
+  if (d.length > MAX_DIST_LENGTH) {
+    const size = Math.ceil(d.length / MAX_DIST_LENGTH);
     const newD = [];
-    for (let i = 0; true; i++) {
-      let lower = i * size;
+    for (let lower = 0; lower <= d.length; lower += size) {
       let upper = lower + size;
       let window = d.slice(lower, upper);
-      if (window.length === 0) break;
       let newPoint = window.reduce(
         (a, b) => {
           let p = a.p + b.p;

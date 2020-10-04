@@ -1,5 +1,6 @@
+type distType = { v: number; p: number }[];
 type playerStatsType = playerType & {
-  dist: dType;
+  dist: distType;
   time: string;
   proj: number;
   mean: number;
