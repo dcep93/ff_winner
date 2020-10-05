@@ -48,20 +48,30 @@ function playerToData(player: playerType): Promise<playerStatsType> {
           })),
         });
       })
+      .then((playerStats) => Object.assign(playerStats, player))
       .then((playerStats) =>
-        Object.assign(
-          {
-            mean: playerStats.dist
-              .map((i) => i.p * i.v)
-              .reduce((a, b) => a + b, 0),
-            median: playerStats.dist.reduce(
-              (a, b) => (a.p >= 0.5 ? a : { p: a.p + b.p, v: b.v }),
-              { p: 0, v: 0 }
-            ).v,
-          },
-          playerStats,
-          player
-        )
+        Object.assign(playerStats, {
+          mean: playerStats.dist
+            .map((i) => i.p * i.v)
+            .reduce((a, b) => a + b, 0),
+        })
+      )
+      // increase variance by doubling distance from mean
+      .then((playerStats) =>
+        Object.assign(playerStats, {
+          dist: playerStats.dist.map((i) => ({
+            p: i.p,
+            v: 2 * i.v - playerStats.mean,
+          })),
+        })
+      )
+      .then((playerStats) =>
+        Object.assign(playerStats, {
+          median: playerStats.dist.reduce(
+            (a, b) => (a.p >= 0.5 ? a : { p: a.p + b.p, v: b.v }),
+            { p: 0, v: 0 }
+          ).v,
+        })
       )
       // not 100% sure this calculation of stddev is correct
       .then((playerStats) =>
