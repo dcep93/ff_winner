@@ -84,6 +84,7 @@ function plot(tag, dataObj, upset) {
       var intercept = findIntercept(0, 0, data);
       drawLine([0, intercept], "black");
       var action, prob;
+      if (intercept === null) intercept = data[0][0] > 0 ? 0 : 1;
       if (intercept > 0.5) {
         action = "LOSES TO";
         prob = intercept;
