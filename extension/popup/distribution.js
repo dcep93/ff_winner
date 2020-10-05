@@ -3,6 +3,8 @@ const key = "distribution_v0.1";
 const num_points = 10000;
 const num_lines = 3;
 
+var rendered = false;
+
 const timeout = setTimeout(
   () => render(JSON.parse(localStorage.getItem(key))),
   100
@@ -19,6 +21,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 function render(data) {
   console.log(data);
+  if (rendered) return console.log("already rendered");
+  rendered = true;
   document.title = `${document.title} v${data.version}`;
   renderTeams(data.teams);
   renderDistribution(data.dists);
