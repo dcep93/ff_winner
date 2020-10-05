@@ -19,6 +19,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 function render(data) {
   console.log(data);
+  document.title = `${document.title} v${data.version}`;
   renderTeams(data.teams);
   renderDistribution(data.dists);
 }

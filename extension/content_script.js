@@ -38,5 +38,14 @@ function fileToPromise(fileName) {
 function render(data) {
   document.title = "Rendering...";
   console.log(data);
-  chrome.runtime.sendMessage({ data, page: "popup/distribution.html" });
+  const url = chrome.runtime.getURL("manifest.json");
+  fetch(url)
+    .then((response) => response.json())
+    .then((json) => json.version)
+    .then((version) =>
+      chrome.runtime.sendMessage({
+        data: Object.assign(data, { version }),
+        page: "popup/distribution.html",
+      })
+    );
 }
