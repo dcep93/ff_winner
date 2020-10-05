@@ -1,6 +1,6 @@
 {
-  "name": "FF Dist",
-  "description": "Computes a score distribution to determine a likely winner in fantasy football.",
+  "name": "FF Winner",
+  "description": "Computes a score distribution to determine a likely winner in ESPN fantasy football.",
   "version": "0.0.1",
   "permissions": [],
   "icons": {

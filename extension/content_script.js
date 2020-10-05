@@ -38,5 +38,5 @@ function fileToPromise(fileName) {
 function render(data) {
   document.title = "Rendering...";
   console.log(data);
-  chrome.runtime.sendMessage({ data, page: "ffdist/distribution.html" });
+  chrome.runtime.sendMessage({ data, page: "popup/distribution.html" });
 }
