@@ -24,6 +24,7 @@ function joinAllDistributions(
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
     if (player.gameProgress) {
+      // this is sus for d/st
       var base = player.id < 0 ? DST_BASE : 0;
       var projected = (player.fpts - base) / player.gameProgress + base;
       if (player.dist.length === 0) {
@@ -35,7 +36,7 @@ function joinAllDistributions(
         var dist = player.dist.map((point) => ({
           p: point.p,
           v:
-            player.fpts +
+            player.fpts -
             player.gameProgress * dampened +
             (1 - player.gameProgress) * point.v * (1 - player.gameProgress),
         }));
