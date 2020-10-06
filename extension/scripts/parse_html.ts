@@ -54,10 +54,22 @@ function getTeams(): parsedTeamsType[] {
   );
 }
 
-// todo
-function getGameProgresses(index: number) {
-  return [];
-  // getElementsByClassName("game-status-inline")
+function getGameProgresses(index: number): (number | undefined)[] {
+  const matchupTable = document.getElementsByClassName("matchupTable")[index];
+  if (!matchupTable) return [];
+  return Array.from(matchupTable.getElementsByTagName("tr"))
+    .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
+    .map((tr) => tr.getElementsByClassName("game-status-inline")[0])
+    .map((maybeGameStatus) => {
+      if (maybeGameStatus) {
+        const text = getText(maybeGameStatus);
+        const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
+        if (match && match.groups) {
+          return getGameProgress(match.groups.timing);
+        }
+      }
+      return undefined;
+    });
 }
 
 function getText(element) {
