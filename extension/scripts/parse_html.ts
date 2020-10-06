@@ -1,12 +1,12 @@
 type parsedTeamsType = {
   name: string;
+  teamId: number;
   gameProgresses: (number | undefined)[];
 };
 
 type parsedHTMLType = {
   matchupPeriodId: number;
   seasonId: number;
-  teamId: number;
   leagueId: number;
   teams: parsedTeamsType[];
 };
@@ -14,84 +14,47 @@ type parsedHTMLType = {
 function parseHTML(): parsedHTMLType {
   console.log(arguments.callee.name, arguments[0]);
   document.title = "Parsing...";
-  const managerNames = Array.from(
-    document.body.getElementsByClassName("teamName")
-  ).map((i) => i.getAttribute("title"));
-  const teamPlayers = Array.from(
-    document.body.getElementsByClassName("matchupTable")
-  )
-    .map((element) => element.getElementsByTagName("tbody")[0])
-    .map(tableToPlayers);
-  return Array.from(new Array(2)).map((_, i) => ({
-    name: managerNames[i],
-    players: teamPlayers[i],
-  }));
+  const urlParams = new URLSearchParams(window.location.search);
+  const matchupPeriodId = parseInt(urlParams.get("matchupPeriodId"));
+  const seasonId = parseInt(urlParams.get("seasonId"));
+  const leagueId = parseInt(urlParams.get("leagueId"));
+  const teams = getTeams();
+  return { matchupPeriodId, seasonId, leagueId, teams };
 }
 
-const headshotRegexp = /\/i\/headshots\/nfl\/players\/full\/(?<id>\d+)\.png/i;
-function tableToPlayers(tableElement): playerType[] {
-  const players = [];
-  for (let i = 0; i < tableElement.children.length; i++) {
-    let tr = tableElement.children[i];
-    let id = trToId(tr);
-    if (id !== null) {
-      let position = tr.children[0].children[0].innerText;
-      let div = tr.children[1].children[0];
-      let name = div.title;
-      let imgurl = div.getElementsByTagName("img")[0].src;
-      const player: playerType = { id, name, imgurl, position };
-      const fpts = tr.children[5].children[0].children[0].innerText;
-      if (fpts !== "--") {
-        player.fpts = parseFloat(fpts);
-      }
-      const status = tr.children[3].getElementsByClassName(
-        "game-status-inline"
-      )[0];
-      if (status) {
-        const text = getText(status);
-        const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
-        if (match && match.groups) {
-          player.gameProgress = getGameProgress(match.groups.timing);
-        }
-      }
-      players.push(player);
+function getTeams(): parsedTeamsType[] {
+  const allTeams = Array.from(document.body.getElementsByTagName("a"))
+    .filter((i) => i.href.match(/teamId=\d+$/))
+    .map((i) => [
+      i.href.split("&teamId=")[1],
+      Array.from(i.getElementsByClassName("owner-name"))
+        .map((i) => i.innerHTML)
+        .join(","),
+    ]);
+  return Array.from(document.body.getElementsByClassName("team-header")).map(
+    (teamHeader, index) => {
+      var name = teamHeader
+        .getElementsByClassName("teamName")[0]
+        .getAttribute("title");
+      var owners = Array.from(teamHeader.getElementsByClassName("owner-name"))
+        .map((owner) => owner.innerHTML)
+        .join(",");
+      var teamId = parseInt(allTeams.find((team) => team[1] === owners)[0]);
+      var gameProgresses = getGameProgresses(index);
+      return { name, teamId, gameProgresses };
     }
-  }
-  return players;
+  );
 }
 
-function trToId(tr): number | null {
-  const innerHTML = tr.innerHTML;
-  const match = innerHTML.match(headshotRegexp);
-  if (match) {
-    const groups = match.groups;
-    if (groups) {
-      return parseInt(groups.id);
-    }
-  }
-  const dst = tr.getElementsByClassName("truncate")[0];
-  if (dst) {
-    const teamMatch = dst.innerText.match(/(?<team>.*?) D\/ST/);
-    if (teamMatch) {
-      const groups = teamMatch.groups;
-      if (groups) {
-        const team = groups.team;
-        const teamId = dstToId[team];
-        if (teamId) {
-          return teamId;
-        }
-      }
-    }
-    alert(teamMatch);
-  }
-  return null;
+// todo
+function getGameProgresses(index: number) {
+  return [];
+  // getElementsByClassName("game-status-inline")
 }
 
 function getText(element) {
   if (!element.children?.length) return element.innerText;
-  return Array.from(element.children)
-    .map((i) => getText(i))
-    .join(" ");
+  return Array.from(element.children).map(getText).join(" ");
 }
 
 function getGameProgress(timing: string): number {
@@ -109,67 +72,4 @@ const quarterToPortion = {
   "2nd": 0.5,
   "3rd": 0.75,
   "4th": 1,
-};
-
-const dstToId = {
-  Bills: -16002,
-  Bears: -16003,
-  Falcons: -16001,
-  Bengals: -16004,
-  Browns: -16005,
-  Cowboys: -16006,
-  Broncos: -16007,
-  Lions: -16008,
-  Packers: -16009,
-  Titans: -16010,
-  Colts: -16011,
-  Chiefs: -16012,
-  Raiders: -16013,
-  Rams: -16014,
-  Dolphins: -16015,
-  Vikings: -16016,
-  Saints: -16018,
-  Patriots: -16017,
-  Giants: -16019,
-  Jets: -16020,
-  Eagles: -16021,
-  Cardinals: -16022,
-  Steelers: -16023,
-  Chargers: -16024,
-  "49ers": -16025,
-  Washington: -16028,
-  Jaguars: -16030,
-  Seahawks: -16026,
-  Panthers: -16029,
-  Buccaneers: -16027,
-  Ravens: -16033,
-  Texans: -16034,
-};
-
-const slotCategoryIdToPositionMap = {
-  0: "QB",
-  1: "TQB",
-  2: "RB",
-  3: "RB/WR",
-  4: "WR",
-  5: "WR/TE",
-  6: "TE",
-  7: "OP",
-  8: "DT",
-  9: "DE",
-  10: "LB",
-  11: "DL",
-  12: "CB",
-  13: "S",
-  14: "DB",
-  15: "DP",
-  16: "D/ST",
-  17: "K",
-  18: "P",
-  19: "HC",
-  20: "Bench",
-  21: "IR",
-  22: "Unknown22", // TODO: Figure out what this is
-  23: "RB/WR/TE",
-  24: "Unknown24", // TODO: Figure out what this is
 };
