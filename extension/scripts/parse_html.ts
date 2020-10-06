@@ -3,6 +3,7 @@ type parsedPlayerType = {
   fpts: number | undefined;
   name: string;
   team: string;
+  position: string;
 };
 type parsedTeamsType = {
   name: string;
@@ -60,22 +61,43 @@ function getTeams(): parsedTeamsType[] {
 }
 
 function getPlayers(index: number): parsedPlayerType[] {
+  const matchupTable = document.getElementsByClassName("matchupTable")[index];
+  if (matchupTable) {
+    return getLivePlayers(index);
+  } else {
+    return getFuturePlayers(matchupTable);
+  }
+}
+
+function getLivePlayers(index: number): parsedPlayerType[] {
   return [];
-  // const matchupTable = document.getElementsByClassName("matchupTable")[index];
-  // if (!matchupTable) return [];
-  // return Array.from(matchupTable.getElementsByTagName("tr"))
-  //   .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
-  //   .map((tr) => tr.getElementsByClassName("game-status-inline")[0])
-  //   .map((maybeGameStatus) => {
-  //     if (maybeGameStatus) {
-  //       const text = getText(maybeGameStatus);
-  //       const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
-  //       if (match && match.groups) {
-  //         return getGameProgress(match.groups.timing);
-  //       }
-  //     }
-  //     return undefined;
-  //   });
+}
+
+function getFuturePlayers(matchupTable: Element): parsedPlayerType[] {
+  return Array.from(matchupTable.getElementsByTagName("tr"))
+    .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
+    .map(parseFuturePlayer);
+}
+
+function parseFuturePlayer(tr: Element): parsedPlayerType {
+  const maybeGameStatus = tr.getElementsByClassName("game-status-inline")[0];
+  var gameProgress;
+  if (maybeGameStatus) {
+    const text = getText(maybeGameStatus);
+    const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
+    gameProgress =
+      match && match.groups ? getGameProgress(match.groups.timing) : undefined;
+  } else {
+    gameProgress = undefined;
+  }
+  const name = tr
+    .getElementsByClassName("player-column__athlete")[0]
+    .getAttribute("title");
+  const position = getText(tr[0]);
+  const fptsRaw = tr.children[5].children[0].children[0].innerHTML;
+  const fpts = fptsRaw === "--" ? undefined : parseFloat(fptsRaw);
+  const team = tr.getElementsByClassName("playerinfo__playerteam")[0].innerHTML;
+  return { gameProgress, position, fpts, name, team };
 }
 
 function getText(element: Element) {
