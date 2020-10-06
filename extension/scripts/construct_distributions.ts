@@ -31,13 +31,13 @@ function joinAllDistributions(
           Object.assign({}, point, { v: point.v + projected })
         );
       } else {
-        var dampened =
-          projected * player.gameProgress * (1 + player.gameProgress);
+        var dampened = projected * (1 - player.gameProgress);
         var dist = player.dist.map((point) => ({
           p: point.p,
           v:
-            dampened +
-            point.v * (1 - player.gameProgress) * (1 - player.gameProgress),
+            player.fpts +
+            player.gameProgress * dampened +
+            (1 - player.gameProgress) * point.v * (1 - player.gameProgress),
         }));
         d = joinDistributions(d, dist);
       }
