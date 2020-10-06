@@ -32,7 +32,7 @@ function getTeams(): parsedTeamsType[] {
         .map((i) => i.innerHTML)
         .join(","),
     ]);
-  return Array.from(document.body.getElementsByClassName("team-header")).map(
+  return Array.from(document.body.getElementsByClassName("boxscore")).map(
     (teamHeader, index) => {
       var name = teamHeader
         .getElementsByClassName("teamName")[0]
