@@ -27,6 +27,7 @@ function getTeams(): parsedTeamsType[] {
     .filter((i) => i.href.match(/teamId=\d+$/))
     .map((i) => [
       i.href.split("&teamId=")[1],
+      // annoying that we need to key by owner name
       Array.from(i.getElementsByClassName("owner-name"))
         .map((i) => i.innerHTML)
         .join(","),
@@ -39,7 +40,14 @@ function getTeams(): parsedTeamsType[] {
       var owners = Array.from(teamHeader.getElementsByClassName("owner-name"))
         .map((owner) => owner.innerHTML)
         .join(",");
-      var teamId = parseInt(allTeams.find((team) => team[1] === owners)[0]);
+      const found = allTeams.find((team) => team[1] === owners);
+      var teamId;
+      if (found) {
+        teamId = parseInt(found[0]);
+      } else {
+        // first is my team
+        teamId = parseInt(allTeams[0][0]);
+      }
       var gameProgresses = getGameProgresses(index);
       return { name, teamId, gameProgresses };
     }
