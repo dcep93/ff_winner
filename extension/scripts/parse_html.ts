@@ -41,7 +41,7 @@ function getTeams(): parsedTeamsType[] {
         .map((owner) => owner.innerHTML)
         .join(",");
       const found = allTeams.find((team) => team[1] === owners);
-      var teamId;
+      var teamId: number;
       if (found) {
         teamId = parseInt(found[0]);
       } else {
@@ -72,8 +72,8 @@ function getGameProgresses(index: number): (number | undefined)[] {
     });
 }
 
-function getText(element) {
-  if (!element.children?.length) return element.innerText;
+function getText(element: Element) {
+  if (!element.children?.length) return element.innerHTML;
   return Array.from(element.children).map(getText).join(" ");
 }
 
