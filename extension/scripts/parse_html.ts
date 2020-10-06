@@ -2,6 +2,7 @@ type parsedTeamsType = {
   name: string;
   teamId: number;
   gameProgresses: (number | undefined)[];
+  fpts: (number | undefined)[];
 };
 
 type parsedHTMLType = {
@@ -49,7 +50,9 @@ function getTeams(): parsedTeamsType[] {
         teamId = parseInt(allTeams[0][0]);
       }
       var gameProgresses = getGameProgresses(index);
-      return { name, teamId, gameProgresses };
+      // todo
+      var fpts = [];
+      return { name, teamId, gameProgresses, fpts };
     }
   );
 }
