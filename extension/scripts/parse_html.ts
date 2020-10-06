@@ -2,6 +2,7 @@ type parsedPlayerType = {
   gameProgress: number | undefined;
   fpts: number | undefined;
   name: string;
+  team: string;
 };
 type parsedTeamsType = {
   name: string;
