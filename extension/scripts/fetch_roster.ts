@@ -32,23 +32,32 @@ function fetchRoster(params: parsedHTMLType): Promise<teamsType> {
     .then((apiGameObj) => [apiGameObj.away, apiGameObj.home])
     .then((apiGameArr) =>
       apiGameArr.map((apiTeam, i) => {
-        const players = apiTeam.rosterForCurrentScoringPeriod.entries.map(
-          (player, j) => ({
-            id: player.playerId,
-            name: player.playerPoolEntry.player.fullName,
-            imgurl:
-              player.playerId > 0
-                ? "https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/" +
-                  player.playerId +
-                  ".png&w=96&h=70&cb=1"
-                : "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/" +
-                  dstIdToName[player.playerId] +
-                  ".png&h=150&w=150&w=96&h=70&cb=1",
-            position: slotCategoryIdToPositionMap[player.lineupSlotId],
-            fpts: params.teams[i].fpts[j],
-            gameProgress: params.teams[i].gameProgresses[j],
+        const players = apiTeam.rosterForCurrentScoringPeriod.entries
+          .map((player) => {
+            const parsedPlayerIndex = params.teams[i].players.findIndex(
+              (pp) => pp.name === player.playerPoolEntry.player.fullName
+            );
+            const parsedPlayer = params.teams[i].players[parsedPlayerIndex];
+            return {
+              id: player.playerId,
+              name: parsedPlayer.name,
+              imgurl:
+                player.playerId > 0
+                  ? "https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/" +
+                    player.playerId +
+                    ".png&w=96&h=70&cb=1"
+                  : "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/" +
+                    dstIdToName[player.playerId] +
+                    ".png&h=150&w=150&w=96&h=70&cb=1",
+              position: slotCategoryIdToPositionMap[player.lineupSlotId],
+              fpts: parsedPlayer.fpts,
+              gameProgress: parsedPlayer.gameProgress,
+              index: parsedPlayerIndex,
+            };
           })
-        );
+          .map((player) => [player.index, player])
+          .sort()
+          .map((arr) => arr[1]);
         return { name: params.teams[i].name, players };
       })
     );

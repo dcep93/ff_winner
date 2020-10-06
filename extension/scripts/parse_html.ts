@@ -1,10 +1,13 @@
+type parsedPlayerType = {
+  gameProgress: number | undefined;
+  fpts: number | undefined;
+  name: string;
+};
 type parsedTeamsType = {
   name: string;
   teamId: number;
-  gameProgresses: (number | undefined)[];
-  fpts: (number | undefined)[];
+  players: parsedPlayerType[];
 };
-
 type parsedHTMLType = {
   matchupPeriodId: number;
   seasonId: number;
@@ -49,30 +52,29 @@ function getTeams(): parsedTeamsType[] {
         // first is my team
         teamId = parseInt(allTeams[0][0]);
       }
-      var gameProgresses = getGameProgresses(index);
-      // todo
-      var fpts = [];
-      return { name, teamId, gameProgresses, fpts };
+      var gameProgresses = getPlayers(index);
+      return { name, teamId, gameProgresses, players: [] };
     }
   );
 }
 
-function getGameProgresses(index: number): (number | undefined)[] {
-  const matchupTable = document.getElementsByClassName("matchupTable")[index];
-  if (!matchupTable) return [];
-  return Array.from(matchupTable.getElementsByTagName("tr"))
-    .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
-    .map((tr) => tr.getElementsByClassName("game-status-inline")[0])
-    .map((maybeGameStatus) => {
-      if (maybeGameStatus) {
-        const text = getText(maybeGameStatus);
-        const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
-        if (match && match.groups) {
-          return getGameProgress(match.groups.timing);
-        }
-      }
-      return undefined;
-    });
+function getPlayers(index: number): parsedPlayerType[] {
+  return [];
+  // const matchupTable = document.getElementsByClassName("matchupTable")[index];
+  // if (!matchupTable) return [];
+  // return Array.from(matchupTable.getElementsByTagName("tr"))
+  //   .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
+  //   .map((tr) => tr.getElementsByClassName("game-status-inline")[0])
+  //   .map((maybeGameStatus) => {
+  //     if (maybeGameStatus) {
+  //       const text = getText(maybeGameStatus);
+  //       const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
+  //       if (match && match.groups) {
+  //         return getGameProgress(match.groups.timing);
+  //       }
+  //     }
+  //     return undefined;
+  //   });
 }
 
 function getText(element: Element) {
