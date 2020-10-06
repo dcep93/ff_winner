@@ -15,13 +15,17 @@ function execute() {
   };
   document.title = "Preparing...";
   Promise.all(
-    ["parse_html.ts", "fetch_data.ts", "construct_distributions.ts"].map(
-      fileToPromise
-    )
+    [
+      "parse_html.ts",
+      "fetch_roster.ts",
+      "fetch_watson.ts",
+      "construct_distributions.ts",
+    ].map(fileToPromise)
   )
     // need to call functions like this so they are lazy loaded
     .then(() => parseHTML())
-    .then((data) => fetchData(data))
+    .then((data) => fetchRoster(data))
+    .then((data) => fetchWatson(data))
     .then((data) => constructDistributions(data))
     .then((data) => render(data))
     .then(() => (document.title = title));

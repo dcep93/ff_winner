@@ -23,7 +23,7 @@ function joinAllDistributions(
   teamData.slice(0, MAX_PLAYERS).forEach((player, j) => {
     var progress = (i + j / MAX_PLAYERS) / 2;
     document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-    if (player.gameProgress) {
+    if (player.gameProgress !== undefined) {
       // this is sus for d/st
       var base = player.id < 0 ? DST_BASE : 0;
       var projected = (player.fpts - base) / player.gameProgress + base;
@@ -42,7 +42,7 @@ function joinAllDistributions(
         }));
         d = joinDistributions(d, dist);
       }
-    } else if (player.fpts !== undefined && player.gameProgress === undefined) {
+    } else if (player.fpts !== undefined) {
       d = d.map((point) =>
         Object.assign({}, point, { v: point.v + player.fpts })
       );

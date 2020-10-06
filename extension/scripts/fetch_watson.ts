@@ -7,10 +7,9 @@ type playerStatsType = playerType & {
   median: number;
   stddev: number;
 };
-type teamStatsType = { name: string; playerStats: playerStatsType[] };
-type teamsStatsType = teamStatsType[];
+type teamsStatsType = { name: string; playerStats: playerStatsType[] }[];
 
-function fetchData(teams: teamsType): Promise<teamsStatsType> {
+function fetchWatson(teams: teamsType): Promise<teamsStatsType> {
   console.log(arguments.callee.name, arguments[0]);
   document.title = "Fetching Data...";
   const teamPromises = teams.map((team) =>
