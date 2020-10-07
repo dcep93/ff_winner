@@ -44,7 +44,7 @@ function renderTeam(team, label) {
       .filter(
         (player) => player.position !== "Bench" && player.position !== "IR"
       )
-      .map((player) => player[attr])
+      .map((player) => player[attr] || 0)
       .reduce((a, b) => a + b, 0)
       .toFixed(2);
   });

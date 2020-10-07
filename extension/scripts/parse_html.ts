@@ -77,7 +77,9 @@ function getFuturePlayersTable(index: number): parsedPlayerType[] {
   return (
     Array.from(table.getElementsByTagName("tr"))
       // todo
-      .filter((tr) => true)
+      .filter(
+        (tr) => tr.getElementsByClassName("player-column__athlete").length > 0
+      )
       .map((tr) => ({
         name: tr
           .getElementsByClassName("player-column__athlete")[0]
