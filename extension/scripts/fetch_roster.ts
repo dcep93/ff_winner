@@ -81,6 +81,6 @@ const slotCategoryIdToPositionMap = {
   20: "Bench",
   21: "IR",
   22: "Unknown22", // TODO: Figure out what this is
-  23: "RB/WR/TE",
+  23: "FLEX", //"RB/WR/TE",
   24: "Unknown24", // TODO: Figure out what this is
 };
