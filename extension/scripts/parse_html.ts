@@ -54,8 +54,8 @@ function getTeams(): parsedTeamsType[] {
         // first is my team
         teamId = parseInt(allTeams[0][0]);
       }
-      var gameProgresses = getPlayers(index);
-      return { name, teamId, gameProgresses, players: [] };
+      var players = getPlayers(index);
+      return { name, teamId, players };
     }
   );
 }
@@ -63,9 +63,9 @@ function getTeams(): parsedTeamsType[] {
 function getPlayers(index: number): parsedPlayerType[] {
   const matchupTable = document.getElementsByClassName("matchupTable")[index];
   if (matchupTable) {
-    return getLivePlayers(index);
-  } else {
     return getFuturePlayers(matchupTable);
+  } else {
+    return getLivePlayers(index);
   }
 }
 
@@ -74,8 +74,14 @@ function getLivePlayers(index: number): parsedPlayerType[] {
 }
 
 function getFuturePlayers(matchupTable: Element): parsedPlayerType[] {
-  return Array.from(matchupTable.getElementsByTagName("tr"))
+  return Array.from(
+    matchupTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr")
+  )
     .filter((tr) => tr.getElementsByClassName("total-col").length === 0)
+    .filter(
+      (tr) =>
+        tr.getElementsByClassName("player-column__empty-headshot").length === 0
+    )
     .map(parseFuturePlayer);
 }
 
@@ -93,7 +99,7 @@ function parseFuturePlayer(tr: Element): parsedPlayerType {
   const name = tr
     .getElementsByClassName("player-column__athlete")[0]
     .getAttribute("title");
-  const position = getText(tr[0]);
+  const position = getText(tr.children[0]);
   const fptsRaw = tr.children[5].children[0].children[0].innerHTML;
   const fpts = fptsRaw === "--" ? undefined : parseFloat(fptsRaw);
   const team = tr.getElementsByClassName("playerinfo__playerteam")[0].innerHTML;
