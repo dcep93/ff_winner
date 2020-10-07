@@ -1,6 +1,6 @@
 function plot(tag, dataObj, upset) {
   // dimensions
-  var availableWidth = document.body.offsetWidth / 2;
+  var availableWidth = document.body.offsetWidth * 0.4;
   var margin = { top: 20, right: 20, bottom: 30, left: 50 },
     width = availableWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -80,7 +80,7 @@ function plot(tag, dataObj, upset) {
       for (let t = step; t < 1; t += step) {
         drawLine([findIntercept(t, 1, data), t], color);
       }
-    } else {
+    } else if (data.length > 0) {
       var intercept = findIntercept(0, 0, data);
       drawLine([0, intercept], "black");
       var action, prob;

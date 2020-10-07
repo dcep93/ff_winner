@@ -36,7 +36,18 @@ function renderTeams(teams) {
 function renderTeam(team, label) {
   document.getElementById(`summary_${label}`).innerText = team.name;
   var table = document.getElementById("table");
-  table.insertRow(-1).insertCell(-1).innerText = team.name;
+  var teamRow = table.insertRow(-1);
+  teamRow.insertCell(-1).innerText = team.name;
+  const keys = ["fpts", "proj", "mean", "median", "stddev"];
+  keys.forEach((attr) => {
+    teamRow.insertCell(-1).innerText = team.playerStats
+      .filter(
+        (player) => player.position !== "Bench" && player.position !== "IR"
+      )
+      .map((player) => player[attr])
+      .reduce((a, b) => a + b, 0)
+      .toFixed(2);
+  });
   team.playerStats.forEach((player) => {
     var row = table.insertRow(-1);
     var playerDiv = document.createElement("div");
@@ -49,7 +60,7 @@ function renderTeam(team, label) {
     nameSpan.innerText = `${player.name} (${player.position})`;
     playerDiv.appendChild(nameSpan);
     row.insertCell(-1).appendChild(playerDiv);
-    ["fpts", "proj", "mean", "median", "stddev"].forEach(
+    keys.forEach(
       (attr) => (row.insertCell(-1).innerText = player[attr]?.toFixed(1) || "-")
     );
     row.insertCell(-1).innerText = player.time;
