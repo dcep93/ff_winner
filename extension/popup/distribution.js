@@ -83,6 +83,9 @@ function renderDistribution(dists) {
 function cumProb(dist) {
   const low = dist[0].v;
   const high = dist[dist.length - 1].v;
+  if (high === low) {
+    return [[dist[0].v, 1]];
+  }
   const size = (high - low) / (num_points - 1);
   const scoreMap = {};
   dist.forEach((i) => {

@@ -90,7 +90,7 @@ function parseFuturePlayer(tr: Element): parsedPlayerType {
   var gameProgress;
   if (maybeGameStatus) {
     const text = getText(maybeGameStatus);
-    const match = text.match(/\d+-\d+,? (?<timing>.*)$/);
+    const match = text.match(/\d+-\d+,? (?<timing>.+)$/);
     gameProgress =
       match && match.groups ? getGameProgress(match.groups.timing) : undefined;
   } else {

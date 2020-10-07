@@ -24,10 +24,11 @@ function plot(tag, dataObj, upset) {
     .attr("class", "grid")
     .call(d3.axisLeft(y).ticks(20).tickSize(-width).tickFormat(""));
 
-  const nestedEdgeIntercepts = Object.values(dataObj).map((data) => [
-    findIntercept(0.02, 1, data),
-    findIntercept(0.98, 1, data),
-  ]);
+  const nestedEdgeIntercepts = Object.values(dataObj).map((data) =>
+    data.length > 1
+      ? [findIntercept(0.02, 1, data), findIntercept(0.98, 1, data)]
+      : [data[0][0] - 1, data[0][0] + 1]
+  );
   const domain = [
     Math.min(...nestedEdgeIntercepts.map((i) => i[0])),
     Math.max(...nestedEdgeIntercepts.map((i) => i[1])),
