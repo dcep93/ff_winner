@@ -47,7 +47,7 @@ function fetchRoster(params: parsedHTMLType): Promise<teamsType> {
                 : "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/" +
                   parsedPlayer.team +
                   ".png",
-            position: parsedPlayer.position,
+            position: slotCategoryIdToPositionMap[player.lineupSlotId],
             fpts: parsedPlayer.fpts,
             gameProgress: parsedPlayer.gameProgress,
           };

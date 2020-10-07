@@ -1,9 +1,8 @@
 type parsedPlayerType = {
-  gameProgress: number | undefined;
-  fpts: number | undefined;
+  gameProgress?: number;
+  fpts?: number;
   name: string;
   team: string;
-  position: string;
 };
 type parsedTeamsType = {
   name: string;
@@ -63,17 +62,32 @@ function getTeams(): parsedTeamsType[] {
 function getPlayers(index: number): parsedPlayerType[] {
   const matchupTable = document.getElementsByClassName("matchupTable")[index];
   if (matchupTable) {
-    return getFuturePlayers(matchupTable);
+    return getLivePlayers(matchupTable);
   } else {
-    return getLivePlayers(index);
+    return getFuturePlayers(index);
   }
 }
 
-function getLivePlayers(index: number): parsedPlayerType[] {
-  return [];
+function getFuturePlayers(index: number): parsedPlayerType[] {
+  return getFuturePlayersTable(index).concat(getFuturePlayersTable(index + 2));
 }
 
-function getFuturePlayers(matchupTable: Element): parsedPlayerType[] {
+function getFuturePlayersTable(index: number): parsedPlayerType[] {
+  const table = document.body.getElementsByClassName("players-table")[index];
+  return (
+    Array.from(table.getElementsByTagName("tr"))
+      // todo
+      .filter((tr) => true)
+      .map((tr) => ({
+        name: tr
+          .getElementsByClassName("player-column__athlete")[0]
+          .getAttribute("title"),
+        team: tr.getElementsByClassName("playerinfo__playerteam")[0].innerHTML,
+      }))
+  );
+}
+
+function getLivePlayers(matchupTable: Element): parsedPlayerType[] {
   return Array.from(
     matchupTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr")
   )
@@ -99,11 +113,10 @@ function parseFuturePlayer(tr: Element): parsedPlayerType {
   const name = tr
     .getElementsByClassName("player-column__athlete")[0]
     .getAttribute("title");
-  const position = getText(tr.children[0]);
   const fptsRaw = tr.children[5].children[0].children[0].innerHTML;
   const fpts = fptsRaw === "--" ? undefined : parseFloat(fptsRaw);
   const team = tr.getElementsByClassName("playerinfo__playerteam")[0].innerHTML;
-  return { gameProgress, position, fpts, name, team };
+  return { gameProgress, fpts, name, team };
 }
 
 function getText(element: Element) {
