@@ -23,6 +23,10 @@
   display: inline-block;
 }
 
+#table_div {
+  max-width: 59%;
+}
+
 tr:nth-child(odd) {
   background-color: #eee;
 }

@@ -38,16 +38,25 @@ function renderTeam(team, label) {
   var table = document.getElementById("table");
   var teamRow = table.insertRow(-1);
   teamRow.insertCell(-1).innerText = team.name;
+  const playing = team.playerStats.filter(
+    (player) => player.position !== "Bench" && player.position !== "IR"
+  );
   const keys = ["fpts", "proj", "mean", "median", "stddev"];
-  keys.forEach((attr) => {
-    teamRow.insertCell(-1).innerText = team.playerStats
-      .filter(
-        (player) => player.position !== "Bench" && player.position !== "IR"
-      )
-      .map((player) => player[attr] || 0)
-      .reduce((a, b) => a + b, 0)
-      .toFixed(2);
-  });
+  keys.forEach(
+    (attr) =>
+      attr !== "stddev" &&
+      (teamRow.insertCell(-1).innerText = playing
+        .map((player) => player[attr] || 0)
+        .reduce((a, b) => a + b, 0)
+        .toFixed(2))
+  );
+  teamRow.insertCell(-1).innerText = Math.pow(
+    playing
+      .map((player) => player.stddev || 0)
+      .map((stddev) => Math.pow(stddev, 2))
+      .reduce((a, b) => a + b, 0),
+    0.5
+  ).toFixed(2);
   team.playerStats.forEach((player) => {
     var row = table.insertRow(-1);
     var playerDiv = document.createElement("div");
