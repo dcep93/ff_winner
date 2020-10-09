@@ -38,9 +38,7 @@ function renderTeam(team, label) {
   var table = document.getElementById("table");
   var teamRow = table.insertRow(-1);
   teamRow.insertCell(-1).innerText = team.name;
-  const playing = team.playerStats.filter(
-    (player) => player.position !== "Bench" && player.position !== "IR"
-  );
+  const playing = team.playerStats.filter((player) => player.active);
   const keys = ["fpts", "proj", "mean", "median", "stddev"];
   keys.forEach(
     (attr) =>

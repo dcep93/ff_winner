@@ -3,6 +3,7 @@ type playerType = {
   name: string;
   imgurl: string;
   position: string;
+  active: boolean;
   fpts: number;
   gameProgress?: number;
 };
@@ -36,6 +37,7 @@ function fetchRoster(params: parsedHTMLType): Promise<teamsType> {
           const player = apiTeam.rosterForCurrentScoringPeriod.entries.find(
             (p) => p.playerPoolEntry.player.fullName === parsedPlayer.name
           );
+          const position = slotCategoryIdToPositionMap[player.lineupSlotId];
           return {
             id: player.playerId,
             name: parsedPlayer.name,
@@ -47,7 +49,8 @@ function fetchRoster(params: parsedHTMLType): Promise<teamsType> {
                 : "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/" +
                   parsedPlayer.team +
                   ".png",
-            position: slotCategoryIdToPositionMap[player.lineupSlotId],
+            position,
+            active: position !== "Bench" && position !== "IR",
             fpts: parsedPlayer.fpts,
             gameProgress: parsedPlayer.gameProgress,
           };
