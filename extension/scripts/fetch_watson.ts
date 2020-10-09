@@ -50,6 +50,11 @@ function playerToData(player: playerType): Promise<playerStatsType> {
       .then((playerStats) => Object.assign(playerStats, player))
       .then((playerStats) =>
         Object.assign(playerStats, {
+          dist: updateLiveDist(playerStats.dist, playerStats),
+        })
+      )
+      .then((playerStats) =>
+        Object.assign(playerStats, {
           mean: playerStats.dist
             .map((i) => i.p * i.v)
             .reduce((a, b) => a + b, 0),
@@ -87,4 +92,30 @@ function playerToData(player: playerType): Promise<playerStatsType> {
         )
       )
   );
+}
+
+function updateLiveDist(dist: distType, player: playerType): distType {
+  if (player.gameProgress !== undefined) {
+    // this is sus for d/st
+    var base = player.id < 0 ? DST_BASE : 0;
+    var projected = (player.fpts - base) / player.gameProgress + base;
+    if (dist.length === 0) {
+      return [{ p: 1, v: projected }];
+    } else {
+      var dampened = projected * (1 - player.gameProgress);
+      return dist.map((point) => ({
+        p: point.p,
+        v:
+          player.fpts +
+          player.gameProgress * dampened +
+          (1 - player.gameProgress) * point.v * (1 - player.gameProgress),
+      }));
+    }
+  } else if (player.fpts !== undefined) {
+    return [{ p: 1, v: player.fpts }];
+  } else if (dist.length === 0) {
+    return [{ p: 1, v: 0 }];
+  } else {
+    return dist;
+  }
 }
