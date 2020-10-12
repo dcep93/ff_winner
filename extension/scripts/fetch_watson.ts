@@ -102,13 +102,14 @@ function updateLiveDist(dist: distType, player: playerType): distType {
     if (dist.length === 0) {
       return [{ p: 1, v: projected }];
     } else {
-      var dampened = projected * (1 - player.gameProgress);
       return dist.map((point) => ({
         p: point.p,
         v:
           player.fpts +
-          player.gameProgress * dampened +
-          (1 - player.gameProgress) * point.v * (1 - player.gameProgress),
+          (player.gameProgress * projected +
+            (1 - player.gameProgress) * point.v -
+            base) *
+            (1 - player.gameProgress),
       }));
     }
   } else if (player.fpts !== undefined) {
