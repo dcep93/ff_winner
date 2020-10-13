@@ -44,7 +44,7 @@ function renderTeam(team, label) {
     (attr) =>
       attr !== "stddev" &&
       (teamRow.insertCell(-1).innerText = playing
-        .map((player) => player[attr] || 0)
+        .map((player) => (((attr === "mean" || attr === "median") && player.gameProgress === undefined && player.fpts !== undefined) ? player.fpts : (player[attr] || 0)))
         .reduce((a, b) => a + b, 0)
         .toFixed(2))
   );
@@ -110,6 +110,12 @@ function cumProb(dist) {
 }
 
 function findUpset(t1, t2) {
+  if (t1.length === 1) {
+    return t1[0][0]
+  }
+  if (t2.length === 1) {
+    return t2[0][0]
+  }
   var t1IsWinning = findIntercept(0.5, 1, t1) > findIntercept(0.5, 1, t2);
   var favorite = t1IsWinning ? t1 : t2;
   var underdog = t1IsWinning ? t2 : t1;

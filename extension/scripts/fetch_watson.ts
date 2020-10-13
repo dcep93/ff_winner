@@ -112,10 +112,8 @@ function updateLiveDist(dist: distType, player: playerType): distType {
             (1 - player.gameProgress),
       }));
     }
-  } else if (player.fpts !== undefined) {
-    return [{ p: 1, v: player.fpts }];
   } else if (dist.length === 0) {
-    return [{ p: 1, v: 0 }];
+    return [{ p: 1, v: player.fpts || undefined }];
   } else {
     return dist;
   }

@@ -25,7 +25,11 @@ function joinAllDistributions(
     .forEach((player, j) => {
       var progress = (i + j / MAX_PLAYERS) / 2;
       document.title = `Computing... ${(progress * 100).toFixed(0)}%`;
-      d = joinDistributions(d, player.dist);
+      if (player.fpts !== undefined && player.gameProgress === undefined) {
+        d.forEach((i) => (i.v += player.fpts));
+      } else {
+        d = joinDistributions(d, player.dist);
+      }
       delete player.dist;
     });
   return d;
