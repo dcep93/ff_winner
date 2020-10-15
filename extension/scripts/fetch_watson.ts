@@ -30,7 +30,7 @@ function playerToData(player: playerType): Promise<playerStatsType> {
       .then((all_data) => all_data[all_data.length - 1])
       .then((data) => ({
         time: data.DATA_TIMESTAMP.split(" ")[0],
-        proj: data.SCORE_PROJECTION,
+        proj: data.OUTSIDE_PROJECTION,
         dist:
           data.SCORE_DISTRIBUTION === "None"
             ? []
@@ -113,7 +113,7 @@ function updateLiveDist(dist: distType, player: playerType): distType {
       }));
     }
   } else if (dist.length === 0) {
-    return [{ p: 1, v: player.fpts || undefined }];
+    return [{ p: 1, v: player.fpts || 0 }];
   } else {
     return dist;
   }
