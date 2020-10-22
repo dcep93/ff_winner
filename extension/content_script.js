@@ -28,6 +28,7 @@ function execute() {
     .then((data) => fetchWatson(data))
     .then((data) => constructDistributions(data))
     .then((data) => render(data))
+    .catch(alert)
     .then(() => (document.title = title));
 }
 
