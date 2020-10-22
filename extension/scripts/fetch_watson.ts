@@ -27,6 +27,13 @@ function playerToData(player: playerType): Promise<playerStatsType> {
   return (
     fetch(`${url_prefix}_${player.id}_${url_suffix}`)
       .then((req) => req.json())
+      .catch(() => [
+        {
+          DATA_TIMESTAMP: "-",
+          OUTSIDE_PROJECTION: 0,
+          SCORE_DISTRIBUTION: "None",
+        },
+      ])
       .then((all_data) => all_data[all_data.length - 1])
       .then((data) => ({
         time: data.DATA_TIMESTAMP.split(" ")[0],
